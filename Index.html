@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f3f5;
+      padding: 30px;
+    }
+
+    .container {
+      background: white;
+      max-width: 600px;
+      margin: auto;
+      padding: 25px;
+      border-radius: 10px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #263b59;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 20px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    #mensagem {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h2>Gerador de Ordem de Serviço</h2>
+    <p>Assistência Técnica - Eletrônica</p>
+
+    <form id="formOS">
+
+      <label>Nome do cliente</label>
+      <input type="text" name="nome" required>
+
+      <label>Telefone</label>
+      <input type="tel" name="telefone" required>
+
+      <label>Marca da TV</label>
+      <input type="text" name="marca" required>
+
+      <label>Polegadas</label>
+      <input type="number" name="polegadas">
+
+      <label>Diagnóstico</label>
+      <textarea name="diagnostico"></textarea>
+
+      <label>Serviço realizado</label>
+      <textarea name="servico"></textarea>
+
+      <label>Valor (R$)</label>
+      <input type="number" name="valor" step="0.01" min="0">
+
+      <label>Status</label>
+      <select name="status">
+        <option>Recebido</option>
+        <option>Em análise</option>
+        <option>Aguardando aprovação</option>
+        <option>Aguardando peças</option>
+        <option>Em manutenção</option>
+        <option>Concluído</option>
+        <option>Entregue</option>
+        <option>Cancelado</option>
+      </select>
+
+      <label>Observações</label>
+      <textarea name="observacoes"></textarea>
+
+      <button type="submit" id="botao">
+        Cadastrar Ordem de Serviço
+      </button>
+
+    </form>
+
+    <div id="mensagem"></div>
+
+  </div>
+
+  <script>
+    document.getElementById("formOS")
+      .addEventListener("submit", function(event) {
+
+        event.preventDefault();
+
+        const formulario = this;
+        const botao = document.getElementById("botao");
+        const mensagem = document.getElementById("mensagem");
+
+        const dados = Object.fromEntries(
+          new FormData(formulario).entries()
+        );
+
+        botao.disabled = true;
+        botao.innerText = "Salvando...";
+        mensagem.innerText = "";
+
+        google.script.run
+          .withSuccessHandler(function(resposta) {
+            mensagem.style.color = "green";
+            mensagem.innerText = resposta;
+
+            formulario.reset();
+            botao.disabled = false;
+            botao.innerText = "Cadastrar Ordem de Serviço";
+          })
+          .withFailureHandler(function(erro) {
+            mensagem.style.color = "red";
+            mensagem.innerText = erro.message;
+
+            botao.disabled = false;
+            botao.innerText = "Cadastrar Ordem de Serviço";
+          })
+          .salvarOS(dados);
+
+      });
+  </script>
+
+</body>
+</html>
