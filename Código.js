@@ -1,4 +1,3 @@
-
 const ID_PLANILHA = "1X0jjZKfoP7WqIWlVQ4mKjq8aFBkOf-Ex-0IzNdMKfF0";
 
 const STATUS_VALIDOS = [
@@ -41,9 +40,7 @@ function telefoneNormalizado(valor) {
 
 function formatarData(valor) {
   if (!valor) return "";
-
   const data = valor instanceof Date ? valor : new Date(valor);
-
   if (isNaN(data.getTime())) return String(valor);
 
   return Utilities.formatDate(
@@ -53,15 +50,27 @@ function formatarData(valor) {
   );
 }
 
+function formatarDataISO(valor) {
+  if (!valor) return "";
+  const data = valor instanceof Date ? valor : new Date(valor);
+  if (isNaN(data.getTime())) return "";
+
+  return Utilities.formatDate(
+    data,
+    Session.getScriptTimeZone(),
+    "yyyy-MM-dd"
+  );
+}
+
 function localizarLinhaOS(aba, numeroOS) {
   const ultima = aba.getLastRow();
-  if (ultima === 0) throw new Error("Nenhuma OS cadastrada.");
+  if (ultima < 2) throw new Error("Nenhuma OS cadastrada.");
 
-  const ids = aba.getRange(1, 1, ultima, 1).getValues();
+  const ids = aba.getRange(2, 1, ultima - 1, 1).getValues();
 
   for (let i = 0; i < ids.length; i++) {
     if (String(ids[i][0]) === String(numeroOS)) {
-      return i + 1;
+      return i + 2;
     }
   }
 
@@ -81,8 +90,8 @@ function salvarOS(dados) {
     const valor = numero(dados.valor);
     const status = String(dados.status || "Recebido");
 
-    if (!nome || !telefoneNormalizado(telefone) || !marca) {
-      throw new Error("Preencha nome, telefone e marca.");
+    if (!nome || !telefoneNormalizado(telefone)) {
+      throw new Error("Preencha o nome e o telefone do cliente.");
     }
 
     if (valor < 0 || !isFinite(valor)) {
@@ -97,9 +106,10 @@ function salvarOS(dados) {
     const telefoneBusca = telefoneNormalizado(telefone);
     let idCliente = "";
 
-    // Reutiliza um cliente existente com o mesmo telefone.
-    if (clientes.getLastRow() > 0) {
-      const registros = clientes.getDataRange().getValues();
+    if (clientes.getLastRow() >= 2) {
+      const registros = clientes.getRange(
+        2, 1, clientes.getLastRow() - 1, 4
+      ).getValues();
 
       for (const linha of registros) {
         if (telefoneNormalizado(linha[2]) === telefoneBusca) {
@@ -113,15 +123,9 @@ function salvarOS(dados) {
       idCliente = "CLI" + Utilities.getUuid()
         .slice(0, 8).toUpperCase();
 
-      clientes.appendRow([
-        idCliente,
-        nome,
-        telefone,
-        agora
-      ]);
+      clientes.appendRow([idCliente, nome, telefone, agora]);
     }
 
-    // UUID evita números repetidos em cadastros simultâneos.
     const numeroOS = "OS" +
       Utilities.formatDate(
         agora,
@@ -131,24 +135,22 @@ function salvarOS(dados) {
       Utilities.getUuid().slice(0, 6).toUpperCase();
 
     ordens.appendRow([
-      numeroOS,                 // A - Número OS
-      idCliente,                // B - Cliente
-      agora,                    // C - Data
-      marca,                    // D - Marca
-      dados.polegadas || "",    // E - Polegadas
-      dados.diagnostico || "",  // F - Diagnóstico
-      dados.servico || "",      // G - Serviço
-      valor,                    // H - Valor
-      status,                   // I - Status
-      dados.observacoes || "",  // J - Observações
-      0,                        // K - Valor recebido
-      "",                       // L - Forma de pagamento
-      ""                        // M - Data pagamento
+      numeroOS,
+      idCliente,
+      agora,
+      marca,
+      dados.polegadas || "",
+      dados.diagnostico || "",
+      dados.servico || "",
+      valor,
+      status,
+      dados.observacoes || "",
+      0,
+      "",
+      ""
     ]);
 
-    return "Ordem de Serviço " + numeroOS +
-      " cadastrada com sucesso!";
-
+    return "Ordem de Serviço " + numeroOS + " cadastrada com sucesso!";
   } finally {
     lock.releaseLock();
   }
@@ -156,16 +158,16 @@ function salvarOS(dados) {
 
 function listarOS() {
   const { clientes, ordens } = obterAbas();
-
   const mapaClientes = {};
 
-  if (clientes.getLastRow() > 0) {
-    const dadosClientes = clientes.getDataRange().getValues();
+  if (clientes.getLastRow() >= 2) {
+    const dadosClientes = clientes.getRange(
+      2, 1, clientes.getLastRow() - 1, 4
+    ).getValues();
 
     dadosClientes.forEach(linha => {
       const id = String(linha[0] || "");
-
-      if (id.startsWith("CLI")) {
+      if (id) {
         mapaClientes[id] = {
           nome: String(linha[1] || ""),
           telefone: String(linha[2] || "")
@@ -174,11 +176,13 @@ function listarOS() {
     });
   }
 
-  if (ordens.getLastRow() === 0) return [];
+  if (ordens.getLastRow() < 2) return [];
 
-  const registros = ordens.getDataRange().getValues();
+  const registros = ordens.getRange(
+    2, 1, ordens.getLastRow() - 1, 13
+  ).getValues();
 
-  const resultado = registros
+  return registros
     .filter(linha => String(linha[0] || "").startsWith("OS"))
     .map(linha => {
       const cliente = mapaClientes[String(linha[1])] || {
@@ -190,6 +194,7 @@ function listarOS() {
         numero: String(linha[0]),
         idCliente: String(linha[1]),
         data: formatarData(linha[2]),
+        dataISO: formatarDataISO(linha[2]),
         nome: cliente.nome,
         telefone: cliente.telefone,
         marca: String(linha[3] || ""),
@@ -203,9 +208,8 @@ function listarOS() {
         formaPagamento: String(linha[11] || ""),
         dataPagamento: formatarData(linha[12])
       };
-    });
-
-  return resultado.reverse();
+    })
+    .reverse();
 }
 
 function atualizarStatusOS(numeroOS, novoStatus) {
@@ -219,11 +223,22 @@ function atualizarStatusOS(numeroOS, novoStatus) {
   try {
     const { ordens } = obterAbas();
     const linha = localizarLinhaOS(ordens, numeroOS);
-
-    // Coluna I
     ordens.getRange(linha, 9).setValue(novoStatus);
-
     return "Status atualizado com sucesso!";
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function excluirOS(numeroOS) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(30000);
+
+  try {
+    const { ordens } = obterAbas();
+    const linha = localizarLinhaOS(ordens, numeroOS);
+    ordens.deleteRow(linha);
+    return "Ordem de Serviço excluída com sucesso.";
   } finally {
     lock.releaseLock();
   }
@@ -237,7 +252,6 @@ function registrarPagamento(numeroOS, valorPagamento, formaPagamento) {
   }
 
   const formas = ["Dinheiro", "Pix", "Cartão", "Transferência"];
-
   if (!formas.includes(formaPagamento)) {
     throw new Error("Forma de pagamento inválida.");
   }
@@ -248,27 +262,18 @@ function registrarPagamento(numeroOS, valorPagamento, formaPagamento) {
   try {
     const { ordens } = obterAbas();
     const linha = localizarLinhaOS(ordens, numeroOS);
-
-    // Lê H até M.
     const dados = ordens.getRange(linha, 8, 1, 6).getValues()[0];
 
     const totalOS = numero(dados[0]);
     const recebidoAnterior = numero(dados[3]);
-    const saldo = Math.round(
-      (totalOS - recebidoAnterior) * 100
-    ) / 100;
+    const saldo = Math.round((totalOS - recebidoAnterior) * 100) / 100;
 
     if (valor > saldo + 0.001) {
-      throw new Error(
-        "O pagamento não pode ser maior que o valor pendente."
-      );
+      throw new Error("O pagamento não pode ser maior que o valor pendente.");
     }
 
-    const novoTotal = Math.round(
-      (recebidoAnterior + valor) * 100
-    ) / 100;
+    const novoTotal = Math.round((recebidoAnterior + valor) * 100) / 100;
 
-    // K, L e M: atualiza o recebimento acumulado.
     ordens.getRange(linha, 11, 1, 3).setValues([[
       novoTotal,
       formaPagamento,
