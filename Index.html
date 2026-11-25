@@ -1,845 +1,458 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <base target="_top" />
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      :root {
-        --azul: #123d70;
-        --azul-escuro: #0c2d52;
-        --azul-claro: #eaf2ff;
-        --fundo: #f3f6fa;
-        --texto: #1f2937;
-        --suave: #64748b;
-        --borda: #dce3ec;
-        --verde: #15803d;
-        --vermelho: #b91c1c;
-        --amarelo: #a16207;
-        --sombra: 0 3px 14px rgba(15, 45, 82, 0.07);
-        --raio: 12px;
-      }
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --azul: #123d70;
+      --azul-escuro: #0c2d52;
+      --azul-claro: #eaf2ff;
+      --fundo: #f3f6fa;
+      --texto: #1f2937;
+      --suave: #64748b;
+      --borda: #dce3ec;
+      --verde: #15803d;
+      --vermelho: #b91c1c;
+      --amarelo: #a16207;
+      --sombra: 0 3px 14px rgba(15, 45, 82, .07);
+      --raio: 12px;
+    }
 
-      * {
-        box-sizing: border-box;
-      }
+    * { box-sizing: border-box; }
 
-      body {
-        margin: 0;
-        background: var(--fundo);
-        color: var(--texto);
-        font-family: Arial, sans-serif;
-      }
+    body {
+      margin: 0;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: Arial, sans-serif;
+    }
 
-      .app {
-        min-height: 100vh;
-        display: flex;
-      }
+    .app { min-height: 100vh; display: flex; }
 
-      .sidebar {
-        width: 230px;
-        flex-shrink: 0;
-        background: linear-gradient(180deg, var(--azul), var(--azul-escuro));
-        color: white;
-        padding: 22px 14px;
-        display: flex;
-        flex-direction: column;
-        gap: 22px;
-      }
+    .sidebar {
+      width: 230px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, var(--azul), var(--azul-escuro));
+      color: white;
+      padding: 22px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
 
-      .brand h1 {
-        margin: 0;
-        font-size: 23px;
-      }
-      .menu {
-        display: grid;
-        gap: 9px;
-      }
+    .brand h1 { margin: 0; font-size: 23px; }
+    .menu { display: grid; gap: 9px; }
 
-      .menu button {
-        width: 100%;
-        padding: 13px 14px;
-        color: white;
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 9px;
-        text-align: left;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-      }
+    .menu button {
+      width: 100%;
+      padding: 13px 14px;
+      color: white;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 9px;
+      text-align: left;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-      .menu button:hover,
-      .menu button.ativo {
-        background: #2563eb;
-        border-color: #2563eb;
-      }
+    .menu button:hover, .menu button.ativo {
+      background: #2563eb;
+      border-color: #2563eb;
+    }
 
-      .content {
-        flex: 1;
-        min-width: 0;
-        padding: 20px;
-      }
+    .content { flex: 1; min-width: 0; padding: 20px; }
 
-      .topbar,
-      .card,
-      .resumo-card {
-        background: white;
-        border-radius: var(--raio);
-        box-shadow: var(--sombra);
-      }
+    .topbar, .card, .resumo-card {
+      background: white;
+      border-radius: var(--raio);
+      box-shadow: var(--sombra);
+    }
 
-      .topbar {
-        padding: 17px 20px;
-        margin-bottom: 18px;
-      }
-      .topbar h2 {
-        margin: 0;
-        color: var(--azul);
-        font-size: 24px;
-      }
+    .topbar { padding: 17px 20px; margin-bottom: 18px; }
+    .topbar h2 { margin: 0; color: var(--azul); font-size: 24px; }
 
-      .pagina {
-        display: none;
-      }
-      .pagina.ativa {
-        display: block;
-      }
+    .pagina { display: none; }
+    .pagina.ativa { display: block; }
 
-      .card {
-        padding: 20px;
-        margin-bottom: 18px;
-      }
-      .card h3 {
-        margin: 0 0 6px;
-        color: var(--azul);
-        font-size: 20px;
-      }
-      .subtitulo {
-        margin: 0 0 18px;
-        color: var(--suave);
-        font-size: 14px;
-      }
+    .card { padding: 20px; margin-bottom: 18px; }
+    .card h3 { margin: 0 0 6px; color: var(--azul); font-size: 20px; }
+    .subtitulo { margin: 0 0 18px; color: var(--suave); font-size: 14px; }
 
-      .secao-titulo {
-        color: var(--azul);
-        font-weight: 700;
-        margin: 22px 0 14px;
-        padding-bottom: 9px;
-        border-bottom: 1px solid var(--borda);
-      }
+    .secao-titulo {
+      color: var(--azul);
+      font-weight: 700;
+      margin: 22px 0 14px;
+      padding-bottom: 9px;
+      border-bottom: 1px solid var(--borda);
+    }
 
-      .campos {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-      .campo {
-        min-width: 0;
-      }
+    .campos { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .campo { min-width: 0; }
 
-      label {
-        display: block;
-        margin-bottom: 7px;
-        color: #374151;
-        font-weight: 700;
-        font-size: 14px;
-      }
+    label {
+      display: block;
+      margin-bottom: 7px;
+      color: #374151;
+      font-weight: 700;
+      font-size: 14px;
+    }
 
-      input,
-      select,
-      textarea {
-        width: 100%;
-        min-height: 44px;
-        padding: 11px 12px;
-        border: 1px solid #cbd5e1;
-        border-radius: 9px;
-        background: white;
-        color: var(--texto);
-        font: inherit;
-        font-size: 16px;
-      }
+    input, select, textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 11px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      background: white;
+      color: var(--texto);
+      font: inherit;
+      font-size: 16px;
+    }
 
-      textarea {
-        min-height: 90px;
-        resize: vertical;
-      }
-      input:focus,
-      select:focus,
-      textarea:focus {
-        outline: none;
-        border-color: #2563eb;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-      }
+    textarea { min-height: 90px; resize: vertical; }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+    }
 
-      .acoes {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 18px;
-      }
+    .acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
 
-      .botao {
-        border: 0;
-        border-radius: 9px;
-        padding: 12px 17px;
-        min-height: 44px;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-      }
+    .botao {
+      border: 0;
+      border-radius: 9px;
+      padding: 12px 17px;
+      min-height: 44px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
 
-      .primario {
-        background: #2563eb;
-        color: white;
-      }
-      .primario:hover {
-        background: #1d4ed8;
-      }
-      .secundario {
-        background: #e9eef5;
-        color: #334155;
-      }
-      .perigo {
-        background: #fee2e2;
-        color: #991b1b;
-      }
-      .botao:disabled {
-        opacity: 0.6;
-        cursor: wait;
-      }
+    .primario { background: #2563eb; color: white; }
+    .primario:hover { background: #1d4ed8; }
+    .secundario { background: #e9eef5; color: #334155; }
+    .perigo { background: #fee2e2; color: #991b1b; }
+    .botao:disabled { opacity: .6; cursor: wait; }
 
-      .mensagem {
-        min-height: 20px;
-        margin-top: 13px;
-        font-weight: 700;
-      }
-      .sucesso {
-        color: var(--verde);
-      }
-      .erro {
-        color: var(--vermelho);
-      }
+    .mensagem { min-height: 20px; margin-top: 13px; font-weight: 700; }
+    .sucesso { color: var(--verde); }
+    .erro { color: var(--vermelho); }
 
-      .filtros {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 12px;
-        margin: 16px 0;
-      }
-      .resumo {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 12px;
-        margin-bottom: 18px;
-      }
-      .resumo-card {
-        padding: 17px;
-        border-left: 4px solid #2563eb;
-      }
-      .resumo-card span {
-        display: block;
-        color: var(--suave);
-        font-size: 13px;
-        margin-bottom: 7px;
-      }
-      .resumo-card strong {
-        color: var(--azul);
-        font-size: 25px;
-      }
+    .filtros { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 16px 0; }
+    .resumo { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+    .resumo-card { padding: 17px; border-left: 4px solid #2563eb; }
+    .dashboard-busca { margin-bottom: 18px; }
+    .dashboard-colunas { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); gap: 18px; align-items: start; }
+    .dashboard-coluna { min-width: 0; }
+    .dashboard-coluna h3 { margin-bottom: 14px; }
+    .dashboard-coluna .lista-os { max-width: none; margin: 0; }
+    .financeiro-filtros { display: grid; grid-template-columns: repeat(2, minmax(0, 220px)); gap: 12px; margin: 16px 0; }
+    .resumo-card span { display: block; color: var(--suave); font-size: 13px; margin-bottom: 7px; }
+    .resumo-card strong { color: var(--azul); font-size: 25px; }
 
-      .lista-os {
-        display: grid;
-        gap: 12px;
-        max-width: 1000px;
-        margin: 0 auto;
-      }
-      .os-card {
-        background: white;
-        border: 1px solid var(--borda);
-        border-radius: 12px;
-        padding: 16px;
-        box-shadow: var(--sombra);
-      }
+    .lista-os { display: grid; gap: 12px; max-width: none; margin: 0; }
+    .os-card {
+      background: white;
+      border: 1px solid var(--borda);
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: var(--sombra);
+    }
 
-      .os-cabecalho {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-      .os-numero {
-        color: var(--azul);
-        font-weight: 700;
-        overflow-wrap: anywhere;
-      }
-      .os-data {
-        color: var(--suave);
-        font-size: 13px;
-        margin-top: 4px;
-      }
-      .os-info {
-        display: grid;
-        gap: 7px;
-        margin: 13px 0;
-        font-size: 14px;
-      }
-      .os-info strong {
-        color: #334155;
-      }
-      .os-acoes {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-      .btn-mini {
-        border: 0;
-        border-radius: 8px;
-        padding: 10px 12px;
-        background: var(--azul-claro);
-        color: var(--azul);
-        font-weight: 700;
-        cursor: pointer;
-      }
+    .os-cabecalho { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .os-numero { color: var(--azul); font-weight: 700; overflow-wrap: anywhere; }
+    .os-data { color: var(--suave); font-size: 13px; margin-top: 4px; }
+    .os-info { display: grid; gap: 7px; margin: 13px 0; font-size: 14px; }
+    .os-info strong { color: #334155; }
+    .os-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-mini {
+      border: 0; border-radius: 8px; padding: 10px 12px;
+      background: var(--azul-claro); color: var(--azul);
+      font-weight: 700; cursor: pointer;
+    }
 
-      .status {
-        display: inline-block;
-        padding: 7px 10px;
-        border-radius: 30px;
-        background: #e2e8f0;
-        color: #334155;
-        font-size: 12px;
-        font-weight: 700;
-        white-space: nowrap;
-      }
-      .status.concluido,
-      .status.entregue {
-        background: #dcfce7;
-        color: #166534;
-      }
-      .status.cancelado {
-        background: #fee2e2;
-        color: #991b1b;
-      }
-      .status.aviso {
-        background: #fef3c7;
-        color: #92400e;
-      }
+    .status {
+      display: inline-block; padding: 7px 10px; border-radius: 30px;
+      background: #e2e8f0; color: #334155; font-size: 12px; font-weight: 700;
+      white-space: nowrap;
+    }
+    .status.concluido { background: #dcfce7; color: #166534; }
+    .status.entregue { background: #dbeafe; color: #1d4ed8; }
+    .status.cancelado { background: #fee2e2; color: #991b1b; }
+    .status.aviso { background: #fef3c7; color: #92400e; }
 
-      .detalhes,
-      .painel-pagamento {
-        display: none;
-      }
-      .detalhes.visivel,
-      .painel-pagamento.visivel {
-        display: block;
-      }
-      .info-linha {
-        margin: 9px 0;
-        line-height: 1.5;
-        overflow-wrap: anywhere;
-      }
-      .vazio {
-        padding: 24px;
-        text-align: center;
-        color: var(--suave);
-        background: white;
-        border-radius: 10px;
-      }
+    .detalhes, .painel-pagamento { display: none; }
+    .detalhes.visivel, .painel-pagamento.visivel { display: block; }
+    .info-linha { margin: 9px 0; line-height: 1.5; overflow-wrap: anywhere; }
+    .vazio { padding: 24px; text-align: center; color: var(--suave); background: white; border-radius: 10px; }
 
-      .tabela-wrap {
-        overflow-x: auto;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 680px;
-        background: white;
-      }
-      th,
-      td {
-        text-align: left;
-        padding: 12px;
-        border-bottom: 1px solid var(--borda);
-        font-size: 14px;
-      }
-      th {
-        background: #f8fafc;
-        color: #475569;
-      }
+    .tabela-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 680px; background: white; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--borda); font-size: 14px; }
+    th { background: #f8fafc; color: #475569; }
 
-      @media (max-width: 760px) {
-        .app {
-          display: block;
-        }
-        .sidebar {
-          width: 100%;
-          padding: 14px;
-          gap: 14px;
-        }
-        .brand h1 {
-          font-size: 21px;
-        }
-        .menu {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-        .menu button {
-          text-align: center;
-          padding: 12px 8px;
-          font-size: 14px;
-        }
-        .content {
-          padding: 12px;
-        }
-        .topbar {
-          padding: 15px;
-          margin-bottom: 12px;
-        }
-        .topbar h2 {
-          font-size: 21px;
-        }
-        .card {
-          padding: 15px;
-        }
-        .resumo {
-          grid-template-columns: 1fr;
-        }
-        .os-cabecalho {
-          display: block;
-        }
-        .os-cabecalho .status {
-          margin-top: 9px;
-        }
-        .botao {
-          width: 100%;
-        }
-        .acoes {
-          display: grid;
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="app">
-      <aside class="sidebar">
-        <div class="brand"><h1>Gerador de OS</h1></div>
-        <nav class="menu">
-          <button
-            id="menu-dashboard"
-            class="ativo"
-            onclick="abrirPagina('dashboard')"
-          >
-            Painel inicial
-          </button>
-          <button id="menu-cadastro" onclick="abrirPagina('cadastro')">
-            Nova OS
-          </button>
-          <button id="menu-historico" onclick="abrirPagina('historico')">
-            Histórico
-          </button>
-          <button id="menu-financeiro" onclick="abrirPagina('financeiro')">
-            Financeiro
-          </button>
-        </nav>
-      </aside>
+    @media (max-width: 760px) {
+      .app { display: block; }
+      .sidebar { width: 100%; padding: 14px; gap: 14px; }
+      .brand h1 { font-size: 21px; }
+      .menu { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .menu button { text-align: center; padding: 12px 8px; font-size: 14px; }
+      .content { padding: 12px; }
+      .topbar { padding: 15px; margin-bottom: 12px; }
+      .topbar h2 { font-size: 21px; }
+      .card { padding: 15px; }
+      .resumo { grid-template-columns: 1fr; }
+      .dashboard-colunas { grid-template-columns: 1fr; }
+      .financeiro-filtros { grid-template-columns: 1fr; }
+      .os-cabecalho { display: block; }
+      .os-cabecalho .status { margin-top: 9px; }
+      .botao { width: 100%; }
+      .acoes { display: grid; grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand"><h1>Gerador de OS</h1></div>
+      <nav class="menu">
+        <button id="menu-dashboard" class="ativo" onclick="abrirPagina('dashboard')">Painel inicial</button>
+        <button id="menu-cadastro" onclick="abrirPagina('cadastro')">Nova OS</button>
+        <button id="menu-historico" onclick="abrirPagina('historico')">Histórico</button>
+        <button id="menu-financeiro" onclick="abrirPagina('financeiro')">Financeiro</button>
+      </nav>
+    </aside>
 
-      <main class="content">
-        <header class="topbar">
-          <h2 id="tituloPagina">Ordens em aberto</h2>
-        </header>
+    <main class="content">
+      <header class="topbar"><h2 id="tituloPagina">Ordens em aberto</h2></header>
 
-        <section id="dashboard" class="pagina ativa">
-          <div class="resumo">
-            <div class="resumo-card">
-              <span>Ordens em aberto</span><strong id="qtdAbertas">0</strong>
-            </div>
-            <div class="resumo-card">
-              <span>Em manutenção</span><strong id="qtdManutencao">0</strong>
-            </div>
-            <div class="resumo-card">
-              <span>Aguardando aprovação ou peças</span
-              ><strong id="qtdAguardando">0</strong>
-            </div>
-          </div>
-          <div class="card">
-            <h3>Ordens que precisam de acompanhamento</h3>
-            <div class="filtros">
-              <div class="campo">
-                <label for="buscaDashboard"
-                  >Pesquisar por cliente, telefone, ID ou número da OS</label
-                ><input
-                  id="buscaDashboard"
-                  type="search"
-                  placeholder="Digite para pesquisar..."
-                  oninput="mostrarDashboard()"
-                />
-              </div>
-              <div class="campo">
-                <label for="dataDashboard">Data de entrada</label
-                ><input
-                  id="dataDashboard"
-                  type="date"
-                  oninput="mostrarDashboard()"
-                />
-              </div>
-            </div>
-            <div id="listaDashboard" class="lista-os"></div>
-          </div>
-        </section>
-
-        <section id="cadastro" class="pagina">
-          <div class="card">
-            <h3>Cadastro de OS</h3>
-            <p class="subtitulo">
-              Preencha os dados do cliente e do equipamento.
-            </p>
-            <form id="formOS">
-              <div class="secao-titulo">Dados do cliente</div>
-              <div class="campos">
-                <div class="campo">
-                  <label for="nome">Nome do cliente *</label
-                  ><input id="nome" type="text" name="nome" required />
-                </div>
-                <div class="campo">
-                  <label for="telefone">Telefone *</label
-                  ><input id="telefone" type="tel" name="telefone" required />
-                </div>
-              </div>
-
-              <div class="secao-titulo">Dados do equipamento</div>
-              <div class="campos">
-                <div class="campo">
-                  <label for="marca">Marca da TV</label
-                  ><input id="marca" type="text" name="marca" />
-                </div>
-                <div class="campo">
-                  <label for="polegadas">Polegadas</label
-                  ><input
-                    id="polegadas"
-                    type="number"
-                    name="polegadas"
-                    min="1"
-                  />
-                </div>
-                <div class="campo">
-                  <label for="diagnostico">Diagnóstico</label
-                  ><textarea
-                    id="diagnostico"
-                    name="diagnostico"
-                    placeholder="Ex.: TV não liga, tela escura, sem áudio..."
-                  ></textarea>
-                </div>
-                <div class="campo">
-                  <label for="servico">Serviço realizado ou previsto</label
-                  ><textarea id="servico" name="servico"></textarea>
-                </div>
-              </div>
-
-              <div class="secao-titulo">Informações da OS</div>
-              <div class="campos">
-                <div class="campo">
-                  <label for="valor">Valor (R$)</label
-                  ><input
-                    id="valor"
-                    type="number"
-                    name="valor"
-                    step="0.01"
-                    min="0"
-                    value="0"
-                  />
-                </div>
-                <div class="campo">
-                  <label for="statusCadastro">Status</label
-                  ><select name="status" id="statusCadastro"></select>
-                </div>
-                <div class="campo">
-                  <label for="observacoes">Observações</label
-                  ><textarea id="observacoes" name="observacoes"></textarea>
-                </div>
-              </div>
-              <div class="acoes">
-                <button class="botao primario" type="submit" id="botaoSalvar">
-                  Salvar Ordem de Serviço
-                </button>
-                <button class="botao secundario" type="reset">
-                  Limpar campos
-                </button>
-              </div>
-              <div id="mensagemCadastro" class="mensagem"></div>
-            </form>
-          </div>
-        </section>
-
-        <section id="historico" class="pagina">
-          <div class="card">
-            <h3>Histórico de OS</h3>
-            <div class="filtros">
-              <div class="campo">
-                <label for="pesquisaHistorico"
-                  >Cliente, telefone, ID ou número da OS</label
-                ><input
-                  id="pesquisaHistorico"
-                  type="search"
-                  placeholder="Pesquisar..."
-                  oninput="mostrarHistorico()"
-                />
-              </div>
-              <div class="campo">
-                <label for="dataInicio">Data inicial</label
-                ><input
-                  id="dataInicio"
-                  type="date"
-                  oninput="mostrarHistorico()"
-                />
-              </div>
-              <div class="campo">
-                <label for="dataFim">Data final</label
-                ><input id="dataFim" type="date" oninput="mostrarHistorico()" />
-              </div>
-            </div>
-            <div id="listaHistorico" class="lista-os"></div>
-          </div>
-        </section>
-
-        <section id="financeiro" class="pagina">
-          <div class="resumo">
-            <div class="resumo-card">
-              <span>Total dos serviços</span
-              ><strong id="totalServicos">R$ 0,00</strong>
-            </div>
-            <div class="resumo-card">
-              <span>Valor recebido</span
-              ><strong id="totalRecebido">R$ 0,00</strong>
-            </div>
-            <div class="resumo-card">
-              <span>Valor pendente</span
-              ><strong id="totalPendente">R$ 0,00</strong>
-            </div>
-          </div>
-          <div class="card">
-            <h3>Pagamentos das OS</h3>
-            <div class="tabela-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>OS / Cliente</th>
-                    <th>Total</th>
-                    <th>Recebido</th>
-                    <th>Pendente</th>
-                    <th>Ação</th>
-                  </tr>
-                </thead>
-                <tbody id="tabelaFinanceiro"></tbody>
-              </table>
-            </div>
-          </div>
-          <div id="painelPagamento" class="card painel-pagamento">
-            <h3>Registrar pagamento</h3>
-            <p id="pagamentoDescricao"></p>
-            <p id="pagamentoSaldo"></p>
-            <form id="formPagamento">
-              <div class="campos">
-                <div class="campo">
-                  <label for="valorPagamento">Valor recebido agora (R$) *</label
-                  ><input
-                    id="valorPagamento"
-                    type="number"
-                    min="0.01"
-                    step="0.01"
-                    required
-                  />
-                </div>
-                <div class="campo">
-                  <label for="formaPagamento">Forma de pagamento</label
-                  ><select id="formaPagamento">
-                    <option>Dinheiro</option>
-                    <option>Pix</option>
-                    <option>Cartão</option>
-                    <option>Transferência</option>
-                  </select>
-                </div>
-              </div>
-              <div class="acoes">
-                <button
-                  class="botao primario"
-                  type="submit"
-                  id="botaoPagamento"
-                >
-                  Confirmar pagamento
-                </button>
-                <button
-                  class="botao secundario"
-                  type="button"
-                  onclick="fecharPagamento()"
-                >
-                  Cancelar
-                </button>
-              </div>
-              <div id="mensagemPagamento" class="mensagem"></div>
-            </form>
-          </div>
-        </section>
-
-        <section id="detalhesOS" class="card detalhes">
-          <h3>Detalhes da Ordem de Serviço</h3>
-          <div id="conteudoDetalhes"></div>
-          <div class="secao-titulo">Atualizar status</div>
+      <section id="dashboard" class="pagina ativa">
+        <div class="card dashboard-busca">
           <div class="campo">
-            <label for="novoStatus">Novo status</label
-            ><select id="novoStatus"></select>
+            <label for="buscaDashboard">Pesquisar por cliente, telefone, ID ou número da OS</label>
+            <input id="buscaDashboard" type="search" placeholder="Digite para pesquisar..." oninput="mostrarDashboard()">
           </div>
-          <div class="acoes">
-            <button
-              class="botao primario"
-              id="botaoStatus"
-              onclick="salvarStatus()"
-            >
-              Salvar alteração
-            </button>
-            <button
-              class="botao perigo"
-              id="botaoExcluir"
-              onclick="confirmarExclusao()"
-            >
-              Excluir OS
-            </button>
-            <button class="botao secundario" onclick="fecharDetalhes()">
-              Fechar
-            </button>
+          <div class="campo" style="margin-top:12px">
+            <label for="dataDashboard">Data de entrada</label>
+            <input id="dataDashboard" type="date" oninput="mostrarDashboard()">
           </div>
-          <div id="mensagemDetalhes" class="mensagem"></div>
-        </section>
-      </main>
-    </div>
+        </div>
+        <div class="resumo">
+          <div class="resumo-card"><span>Ordens em aberto</span><strong id="qtdAbertas">0</strong></div>
+          <div class="resumo-card"><span>Em manutenção</span><strong id="qtdManutencao">0</strong></div>
+          <div class="resumo-card"><span>Aguardando aprovação ou peças</span><strong id="qtdAguardando">0</strong></div>
+        </div>
+        <div class="dashboard-colunas">
+          <section class="card dashboard-coluna">
+            <h3>Em andamento</h3>
+            <div id="listaDashboard" class="lista-os"></div>
+          </section>
+          <section class="card dashboard-coluna">
+            <h3>Encerradas</h3>
+            <div id="listaEncerradas" class="lista-os"></div>
+          </section>
+        </div>
+      </section>
 
-    <script>
-      const STATUS = [
-        "Recebido",
-        "Em análise",
-        "Aguardando aprovação",
-        "Aguardando peças",
-        "Em manutenção",
-        "Concluído",
-        "Entregue",
-        "Cancelado",
-      ];
-      const STATUS_ENCERRADOS = ["Concluído", "Entregue", "Cancelado"];
-      let ordens = [];
-      let osSelecionada = null;
-      let osPagamento = null;
+      <section id="cadastro" class="pagina">
+        <div class="card">
+          <h3>Cadastro de OS</h3>
+          <p class="subtitulo">Preencha os dados do cliente e do equipamento.</p>
+          <form id="formOS">
+            <div class="secao-titulo">Dados do cliente</div>
+            <div class="campos">
+              <div class="campo"><label for="nome">Nome do cliente *</label><input id="nome" type="text" name="nome" required></div>
+              <div class="campo"><label for="telefone">Telefone *</label><input id="telefone" type="tel" name="telefone" required></div>
+            </div>
 
-      const $ = (id) => document.getElementById(id);
-      const moeda = (valor) =>
-        Number(valor || 0).toLocaleString("pt-BR", {
-          style: "currency",
-          currency: "BRL",
+            <div class="secao-titulo">Dados do equipamento</div>
+            <div class="campos">
+              <div class="campo"><label for="marca">Marca da TV</label><input id="marca" type="text" name="marca"></div>
+              <div class="campo"><label for="polegadas">Polegadas</label><input id="polegadas" type="number" name="polegadas" min="1"></div>
+              <div class="campo"><label for="diagnostico">Diagnóstico</label><textarea id="diagnostico" name="diagnostico" placeholder="Ex.: TV não liga, tela escura, sem áudio..."></textarea></div>
+              <div class="campo"><label for="servico">Serviço realizado ou previsto</label><textarea id="servico" name="servico"></textarea></div>
+            </div>
+
+            <div class="secao-titulo">Informações da OS</div>
+            <div class="campos">
+              <div class="campo"><label for="valor">Valor (R$)</label><input id="valor" type="number" name="valor" step="0.01" min="0" value="0"></div>
+              <div class="campo"><label for="statusCadastro">Status</label><select name="status" id="statusCadastro"></select></div>
+              <div class="campo"><label for="observacoes">Observações</label><textarea id="observacoes" name="observacoes"></textarea></div>
+            </div>
+            <div class="acoes">
+              <button class="botao primario" type="submit" id="botaoSalvar">Salvar Ordem de Serviço</button>
+              <button class="botao secundario" type="reset">Limpar campos</button>
+            </div>
+            <div id="mensagemCadastro" class="mensagem"></div>
+          </form>
+        </div>
+      </section>
+
+      <section id="historico" class="pagina">
+        <div class="card">
+          <h3>Histórico de OS</h3>
+          <div class="filtros">
+            <div class="campo"><label for="pesquisaHistorico">Cliente, telefone, ID ou número da OS</label><input id="pesquisaHistorico" type="search" placeholder="Pesquisar..." oninput="mostrarHistorico()"></div>
+            <div class="campo"><label for="dataInicio">Data inicial</label><input id="dataInicio" type="date" oninput="mostrarHistorico()"></div>
+            <div class="campo"><label for="dataFim">Data final</label><input id="dataFim" type="date" oninput="mostrarHistorico()"></div>
+          </div>
+          <div id="listaHistorico" class="lista-os"></div>
+        </div>
+      </section>
+
+      <section id="financeiro" class="pagina">
+        <div class="resumo">
+          <div class="resumo-card"><span>Total dos serviços</span><strong id="totalServicos">R$ 0,00</strong></div>
+          <div class="resumo-card"><span>Valor recebido</span><strong id="totalRecebido">R$ 0,00</strong></div>
+          <div class="resumo-card"><span>Valor pendente</span><strong id="totalPendente">R$ 0,00</strong></div>
+        </div>
+        <div class="card">
+          <h3>Pagamentos das OS</h3>
+          <div class="financeiro-filtros">
+            <div class="campo"><label for="filtroMesFinanceiro">Mês de entrada da OS</label><select id="filtroMesFinanceiro" onchange="mostrarFinanceiro()"><option value="">Todos os meses</option></select></div>
+            <div class="campo"><label for="filtroAnoFinanceiro">Ano de entrada da OS</label><select id="filtroAnoFinanceiro" onchange="mostrarFinanceiro()"><option value="">Todos os anos</option></select></div>
+          </div>
+          <div class="tabela-wrap">
+            <table>
+              <thead><tr><th>OS / Cliente</th><th>Total</th><th>Recebido</th><th>Pendente</th><th>Ação</th></tr></thead>
+              <tbody id="tabelaFinanceiro"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="painelPagamento" class="card painel-pagamento">
+          <h3>Registrar pagamento</h3>
+          <p id="pagamentoDescricao"></p>
+          <p id="pagamentoSaldo"></p>
+          <form id="formPagamento">
+            <div class="campos">
+              <div class="campo"><label for="valorPagamento">Valor recebido agora (R$) *</label><input id="valorPagamento" type="number" min="0.01" step="0.01" required></div>
+              <div class="campo"><label for="formaPagamento">Forma de pagamento</label><select id="formaPagamento"><option>Dinheiro</option><option>Pix</option><option>Cartão</option><option>Transferência</option></select></div>
+            </div>
+            <div class="acoes">
+              <button class="botao primario" type="submit" id="botaoPagamento">Confirmar pagamento</button>
+              <button class="botao secundario" type="button" onclick="fecharPagamento()">Cancelar</button>
+            </div>
+            <div id="mensagemPagamento" class="mensagem"></div>
+          </form>
+        </div>
+      </section>
+
+      <section id="detalhesOS" class="card detalhes">
+        <h3>Detalhes da Ordem de Serviço</h3>
+        <div id="conteudoDetalhes"></div>
+        <div class="secao-titulo">Atualizar status</div>
+        <div class="campo"><label for="novoStatus">Novo status</label><select id="novoStatus"></select></div>
+        <div class="acoes">
+          <button class="botao primario" id="botaoStatus" onclick="salvarStatus()">Salvar alteração</button>
+          <button class="botao perigo" id="botaoExcluir" onclick="confirmarExclusao()">Excluir OS</button>
+          <button class="botao secundario" onclick="fecharDetalhes()">Fechar</button>
+        </div>
+        <div id="mensagemDetalhes" class="mensagem"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const STATUS = [
+      "Recebido", "Em análise", "Aguardando aprovação", "Aguardando peças",
+      "Em manutenção", "Concluído", "Entregue", "Cancelado"
+    ];
+    const STATUS_ENCERRADOS = ["Concluído", "Entregue", "Cancelado"];
+    let ordens = [];
+    let osSelecionada = null;
+    let osPagamento = null;
+
+    const $ = id => document.getElementById(id);
+    const moeda = valor => Number(valor || 0).toLocaleString("pt-BR", {
+      style: "currency", currency: "BRL"
+    });
+
+    function escapar(texto) {
+      return String(texto ?? "").replace(/[&<>"']/g, c => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[c]));
+    }
+
+    function mensagem(id, texto, erro = false) {
+      const el = $(id);
+      el.textContent = texto || "";
+      el.className = "mensagem " + (erro ? "erro" : "sucesso");
+    }
+
+    function chamarServidor(funcao, ...argumentos) {
+      return new Promise((resolve, reject) => {
+        google.script.run.withSuccessHandler(resolve)
+          .withFailureHandler(reject)[funcao](...argumentos);
+      });
+    }
+
+    function abrirPagina(pagina) {
+      document.querySelectorAll(".pagina").forEach(el => {
+        el.classList.toggle("ativa", el.id === pagina);
+      });
+      document.querySelectorAll(".menu button").forEach(el => {
+        el.classList.toggle("ativo", el.id === "menu-" + pagina);
+      });
+
+      const titulos = {
+        dashboard: "Ordens em aberto",
+        cadastro: "Nova Ordem de Serviço",
+        historico: "Histórico de Ordens de Serviço",
+        financeiro: "Financeiro"
+      };
+      $("tituloPagina").textContent = titulos[pagina];
+      $("detalhesOS").classList.remove("visivel");
+
+      if (pagina !== "cadastro") carregarOrdens();
+    }
+
+    function preencherStatus() {
+      ["statusCadastro", "novoStatus"].forEach(id => {
+        $(id).innerHTML = "";
+        STATUS.forEach(status => {
+          const option = document.createElement("option");
+          option.value = status;
+          option.textContent = status;
+          $(id).appendChild(option);
         });
+      });
+    }
 
-      function escapar(texto) {
-        return String(texto ?? "").replace(
-          /[&<>"']/g,
-          (c) =>
-            ({
-              "&": "&amp;",
-              "<": "&lt;",
-              ">": "&gt;",
-              '"': "&quot;",
-              "'": "&#39;",
-            })[c],
-        );
+    async function carregarOrdens() {
+      try {
+        ordens = await chamarServidor("listarOS");
+        mostrarDashboard();
+        mostrarHistorico();
+        preencherFiltrosFinanceiro();
+        mostrarFinanceiro();
+      } catch (erro) {
+        mensagem("mensagemCadastro", "Erro ao carregar dados: " + erro.message, true);
       }
+    }
 
-      function mensagem(id, texto, erro = false) {
-        const el = $(id);
-        el.textContent = texto || "";
-        el.className = "mensagem " + (erro ? "erro" : "sucesso");
-      }
+    function ordensAbertas() {
+      return ordens.filter(os => !STATUS_ENCERRADOS.includes(os.status));
+    }
 
-      function chamarServidor(funcao, ...argumentos) {
-        return new Promise((resolve, reject) => {
-          google.script.run
-            .withSuccessHandler(resolve)
-            .withFailureHandler(reject)
-            [funcao](...argumentos);
-        });
-      }
+    function filtrarPorTexto(os, texto) {
+      if (!texto) return true;
+      const campos = [os.numero, os.idCliente, os.nome, os.telefone, os.marca, os.status];
+      return campos.join(" ").toLowerCase().includes(texto.toLowerCase());
+    }
 
-      function abrirPagina(pagina) {
-        document.querySelectorAll(".pagina").forEach((el) => {
-          el.classList.toggle("ativa", el.id === pagina);
-        });
-        document.querySelectorAll(".menu button").forEach((el) => {
-          el.classList.toggle("ativo", el.id === "menu-" + pagina);
-        });
+    function classeStatus(status) {
+      if (status === "Concluído") return "concluido";
+      if (status === "Entregue") return "entregue";
+      if (status === "Cancelado") return "cancelado";
+      if (status === "Aguardando aprovação" || status === "Aguardando peças") return "aviso";
+      return "";
+    }
 
-        const titulos = {
-          dashboard: "Ordens em aberto",
-          cadastro: "Nova Ordem de Serviço",
-          historico: "Histórico de Ordens de Serviço",
-          financeiro: "Financeiro",
-        };
-        $("tituloPagina").textContent = titulos[pagina];
-        $("detalhesOS").classList.remove("visivel");
-
-        if (pagina !== "cadastro") carregarOrdens();
-      }
-
-      function preencherStatus() {
-        ["statusCadastro", "novoStatus"].forEach((id) => {
-          $(id).innerHTML = "";
-          STATUS.forEach((status) => {
-            const option = document.createElement("option");
-            option.value = status;
-            option.textContent = status;
-            $(id).appendChild(option);
-          });
-        });
-      }
-
-      async function carregarOrdens() {
-        try {
-          ordens = await chamarServidor("listarOS");
-          mostrarDashboard();
-          mostrarHistorico();
-          mostrarFinanceiro();
-        } catch (erro) {
-          mensagem(
-            "mensagemCadastro",
-            "Erro ao carregar dados: " + erro.message,
-            true,
-          );
-        }
-      }
-
-      function ordensAbertas() {
-        return ordens.filter((os) => !STATUS_ENCERRADOS.includes(os.status));
-      }
-
-      function filtrarPorTexto(os, texto) {
-        if (!texto) return true;
-        const campos = [
-          os.numero,
-          os.idCliente,
-          os.nome,
-          os.telefone,
-          os.marca,
-          os.status,
-        ];
-        return campos.join(" ").toLowerCase().includes(texto.toLowerCase());
-      }
-
-      function classeStatus(status) {
-        if (status === "Concluído" || status === "Entregue")
-          return status === "Concluído" ? "concluido" : "entregue";
-        if (status === "Cancelado") return "cancelado";
-        if (status === "Aguardando aprovação" || status === "Aguardando peças")
-          return "aviso";
-        return "";
-      }
-
-      function criarCardOS(os) {
-        return `
+    function criarCardOS(os) {
+      return `
         <article class="os-card">
           <div class="os-cabecalho">
             <div>
@@ -859,238 +472,240 @@
             <button class="btn-mini" onclick="verOS('${escapar(os.numero)}')">Ver detalhes</button>
           </div>
         </article>`;
+    }
+
+    function mostrarDashboard() {
+      const abertas = ordens.filter(os => !STATUS_ENCERRADOS.includes(os.status));
+      const encerradas = ordens.filter(os => STATUS_ENCERRADOS.includes(os.status));
+
+      $("qtdAbertas").textContent = abertas.length;
+      $("qtdManutencao").textContent = abertas.filter(os => os.status === "Em manutenção").length;
+      $("qtdAguardando").textContent = abertas.filter(os =>
+        ["Aguardando aprovação", "Aguardando peças"].includes(os.status)
+      ).length;
+
+      const texto = $("buscaDashboard").value.trim();
+      const data = $("dataDashboard").value;
+      const filtrar = os => filtrarPorTexto(os, texto) && (!data || os.dataISO === data);
+      const abertasFiltradas = abertas.filter(filtrar);
+      const encerradasFiltradas = encerradas.filter(filtrar);
+
+      $("listaDashboard").innerHTML = abertasFiltradas.length
+        ? abertasFiltradas.map(criarCardOS).join("")
+        : '<div class="vazio">Nenhuma ordem em andamento encontrada.</div>';
+
+      $("listaEncerradas").innerHTML = encerradasFiltradas.length
+        ? encerradasFiltradas.map(criarCardOS).join("")
+        : '<div class="vazio">Nenhuma ordem encerrada encontrada.</div>';
+    }
+
+    function mostrarHistorico() {
+      const texto = $("pesquisaHistorico").value.trim();
+      const inicio = $("dataInicio").value;
+      const fim = $("dataFim").value;
+
+      const filtradas = ordens.filter(os =>
+        filtrarPorTexto(os, texto) &&
+        (!inicio || os.dataISO >= inicio) &&
+        (!fim || os.dataISO <= fim)
+      );
+
+      $("listaHistorico").innerHTML = filtradas.length
+        ? filtradas.map(criarCardOS).join("")
+        : '<div class="vazio">Nenhuma ordem encontrada.</div>';
+    }
+
+    function verOS(numeroOS) {
+      const os = ordens.find(item => item.numero === numeroOS);
+      if (!os) return;
+
+      osSelecionada = numeroOS;
+      const campos = [
+        ["Número da OS", os.numero],
+        ["Data", os.data],
+        ["Cliente", os.nome],
+        ["ID do cliente", os.idCliente],
+        ["Telefone", os.telefone],
+        ["Marca", os.marca],
+        ["Polegadas", os.polegadas],
+        ["Diagnóstico", os.diagnostico],
+        ["Serviço", os.servico],
+        ["Valor", moeda(os.valor)],
+        ["Recebido", moeda(os.recebido)],
+        ["Forma de pagamento", os.formaPagamento],
+        ["Data do pagamento", os.dataPagamento],
+        ["Observações", os.observacoes]
+      ];
+
+      $("conteudoDetalhes").innerHTML = campos.map(([titulo, valor]) =>
+        `<div class="info-linha"><strong>${titulo}:</strong> ${escapar(valor || "-")}</div>`
+      ).join("");
+
+      $("novoStatus").value = os.status;
+      mensagem("mensagemDetalhes", "");
+      $("detalhesOS").classList.add("visivel");
+      $("detalhesOS").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function fecharDetalhes() {
+      osSelecionada = null;
+      $("detalhesOS").classList.remove("visivel");
+    }
+
+    async function salvarStatus() {
+      if (!osSelecionada) return;
+      const botao = $("botaoStatus");
+      botao.disabled = true;
+
+      try {
+        await chamarServidor("atualizarStatusOS", osSelecionada, $("novoStatus").value);
+        await carregarOrdens();
+        mensagem("mensagemDetalhes", "Status atualizado com sucesso!");
+        verOS(osSelecionada);
+      } catch (erro) {
+        mensagem("mensagemDetalhes", erro.message, true);
+      } finally {
+        botao.disabled = false;
       }
+    }
 
-      function mostrarDashboard() {
-        const abertas = ordensAbertas();
-        $("qtdAbertas").textContent = abertas.length;
-        $("qtdManutencao").textContent = abertas.filter(
-          (os) => os.status === "Em manutenção",
-        ).length;
-        $("qtdAguardando").textContent = abertas.filter((os) =>
-          ["Aguardando aprovação", "Aguardando peças"].includes(os.status),
-        ).length;
+    async function confirmarExclusao() {
+      if (!osSelecionada) return;
+      const numeroOS = osSelecionada;
+      const confirma = confirm(
+        "Tem certeza de que deseja excluir a OS " + numeroOS +
+        "? Esta ação não poderá ser desfeita."
+      );
+      if (!confirma) return;
 
-        const texto = $("buscaDashboard").value.trim();
-        const data = $("dataDashboard").value;
-        const filtradas = abertas.filter(
-          (os) => filtrarPorTexto(os, texto) && (!data || os.dataISO === data),
-        );
-
-        $("listaDashboard").innerHTML = filtradas.length
-          ? filtradas.map(criarCardOS).join("")
-          : '<div class="vazio">Nenhuma ordem em aberto encontrada.</div>';
+      const botao = $("botaoExcluir");
+      botao.disabled = true;
+      try {
+        await chamarServidor("excluirOS", numeroOS);
+        fecharDetalhes();
+        await carregarOrdens();
+        alert("Ordem de Serviço excluída com sucesso.");
+      } catch (erro) {
+        mensagem("mensagemDetalhes", erro.message, true);
+      } finally {
+        botao.disabled = false;
       }
+    }
 
-      function mostrarHistorico() {
-        const texto = $("pesquisaHistorico").value.trim();
-        const inicio = $("dataInicio").value;
-        const fim = $("dataFim").value;
+    function preencherFiltrosFinanceiro() {
+      const meses = [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+      ];
+      const mesSelect = $("filtroMesFinanceiro");
+      const anoSelect = $("filtroAnoFinanceiro");
+      const mesAtual = String(new Date().getMonth() + 1).padStart(2, "0");
+      const anoAtual = String(new Date().getFullYear());
 
-        const filtradas = ordens.filter(
-          (os) =>
-            filtrarPorTexto(os, texto) &&
-            (!inicio || os.dataISO >= inicio) &&
-            (!fim || os.dataISO <= fim),
-        );
+      mesSelect.innerHTML = '<option value="">Todos os meses</option>' +
+        meses.map((mes, i) => `<option value="${String(i + 1).padStart(2, "0")}">${mes}</option>`).join("");
 
-        $("listaHistorico").innerHTML = filtradas.length
-          ? filtradas.map(criarCardOS).join("")
-          : '<div class="vazio">Nenhuma ordem encontrada.</div>';
-      }
+      const anos = [...new Set(ordens.map(os => (os.dataISO || "").slice(0, 4)).filter(Boolean))].sort().reverse();
+      anoSelect.innerHTML = '<option value="">Todos os anos</option>' +
+        anos.map(ano => `<option value="${escapar(ano)}">${escapar(ano)}</option>`).join("");
 
-      function verOS(numeroOS) {
-        const os = ordens.find((item) => item.numero === numeroOS);
-        if (!os) return;
+      if (anos.includes(anoAtual)) anoSelect.value = anoAtual;
+      mesSelect.value = mesAtual;
+    }
 
-        osSelecionada = numeroOS;
-        const campos = [
-          ["Número da OS", os.numero],
-          ["Data", os.data],
-          ["Cliente", os.nome],
-          ["ID do cliente", os.idCliente],
-          ["Telefone", os.telefone],
-          ["Marca", os.marca],
-          ["Polegadas", os.polegadas],
-          ["Diagnóstico", os.diagnostico],
-          ["Serviço", os.servico],
-          ["Valor", moeda(os.valor)],
-          ["Recebido", moeda(os.recebido)],
-          ["Forma de pagamento", os.formaPagamento],
-          ["Data do pagamento", os.dataPagamento],
-          ["Observações", os.observacoes],
-        ];
+    function mostrarFinanceiro() {
+      const mes = $("filtroMesFinanceiro").value;
+      const ano = $("filtroAnoFinanceiro").value;
+      const filtradas = ordens.filter(os => {
+        const partes = (os.dataISO || "").split("-");
+        return (!ano || partes[0] === ano) && (!mes || partes[1] === mes);
+      });
 
-        $("conteudoDetalhes").innerHTML = campos
-          .map(
-            ([titulo, valor]) =>
-              `<div class="info-linha"><strong>${titulo}:</strong> ${escapar(valor || "-")}</div>`,
-          )
-          .join("");
+      const total = filtradas.reduce((soma, os) => soma + Number(os.valor || 0), 0);
+      const recebido = filtradas.reduce((soma, os) => soma + Number(os.recebido || 0), 0);
+      $("totalServicos").textContent = moeda(total);
+      $("totalRecebido").textContent = moeda(recebido);
+      $("totalPendente").textContent = moeda(Math.max(0, total - recebido));
 
-        $("novoStatus").value = os.status;
-        mensagem("mensagemDetalhes", "");
-        $("detalhesOS").classList.add("visivel");
-        $("detalhesOS").scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-
-      function fecharDetalhes() {
-        osSelecionada = null;
-        $("detalhesOS").classList.remove("visivel");
-      }
-
-      async function salvarStatus() {
-        if (!osSelecionada) return;
-        const botao = $("botaoStatus");
-        botao.disabled = true;
-
-        try {
-          await chamarServidor(
-            "atualizarStatusOS",
-            osSelecionada,
-            $("novoStatus").value,
-          );
-          await carregarOrdens();
-          mensagem("mensagemDetalhes", "Status atualizado com sucesso!");
-          verOS(osSelecionada);
-        } catch (erro) {
-          mensagem("mensagemDetalhes", erro.message, true);
-        } finally {
-          botao.disabled = false;
-        }
-      }
-
-      async function confirmarExclusao() {
-        if (!osSelecionada) return;
-        const numeroOS = osSelecionada;
-        const confirma = confirm(
-          "Tem certeza de que deseja excluir a OS " +
-            numeroOS +
-            "? Esta ação não poderá ser desfeita.",
-        );
-        if (!confirma) return;
-
-        const botao = $("botaoExcluir");
-        botao.disabled = true;
-        try {
-          await chamarServidor("excluirOS", numeroOS);
-          fecharDetalhes();
-          await carregarOrdens();
-          alert("Ordem de Serviço excluída com sucesso.");
-        } catch (erro) {
-          mensagem("mensagemDetalhes", erro.message, true);
-        } finally {
-          botao.disabled = false;
-        }
-      }
-
-      function mostrarFinanceiro() {
-        const total = ordens.reduce(
-          (soma, os) => soma + Number(os.valor || 0),
-          0,
-        );
-        const recebido = ordens.reduce(
-          (soma, os) => soma + Number(os.recebido || 0),
-          0,
-        );
-        $("totalServicos").textContent = moeda(total);
-        $("totalRecebido").textContent = moeda(recebido);
-        $("totalPendente").textContent = moeda(Math.max(0, total - recebido));
-
-        $("tabelaFinanceiro").innerHTML = ordens.length
-          ? ordens
-              .map((os) => {
-                const saldo = Math.max(
-                  0,
-                  Number(os.valor || 0) - Number(os.recebido || 0),
-                );
-                return `<tr>
+      $("tabelaFinanceiro").innerHTML = filtradas.length ? filtradas.map(os => {
+        const saldo = Math.max(0, Number(os.valor || 0) - Number(os.recebido || 0));
+        return `<tr>
           <td><strong>${escapar(os.numero)}</strong><br>${escapar(os.nome)}</td>
           <td>${moeda(os.valor)}</td>
           <td>${moeda(os.recebido)}</td>
           <td>${moeda(saldo)}</td>
-          <td>${
-            saldo > 0
-              ? `<button class="btn-mini" onclick="abrirPagamento('${escapar(os.numero)}')">Registrar</button>`
-              : "Quitado"
-          }</td>
+          <td>${saldo > 0
+            ? `<button class="btn-mini" onclick="abrirPagamento('${escapar(os.numero)}')">Registrar</button>`
+            : "Quitado"}</td>
         </tr>`;
-              })
-              .join("")
-          : '<tr><td colspan="5" class="vazio">Nenhuma OS cadastrada.</td></tr>';
-      }
+      }).join("") : '<tr><td colspan="5" class="vazio">Nenhuma OS encontrada para o período selecionado.</td></tr>';
+    }
 
-      function abrirPagamento(numeroOS) {
-        const os = ordens.find((item) => item.numero === numeroOS);
-        if (!os) return;
-        osPagamento = numeroOS;
-        const saldo = Math.max(
-          0,
-          Number(os.valor || 0) - Number(os.recebido || 0),
+    function abrirPagamento(numeroOS) {
+      const os = ordens.find(item => item.numero === numeroOS);
+      if (!os) return;
+      osPagamento = numeroOS;
+      const saldo = Math.max(0, Number(os.valor || 0) - Number(os.recebido || 0));
+      $("pagamentoDescricao").textContent = os.numero + " - " + os.nome;
+      $("pagamentoSaldo").textContent = "Valor pendente: " + moeda(saldo);
+      $("valorPagamento").value = saldo.toFixed(2);
+      $("valorPagamento").max = saldo.toFixed(2);
+      mensagem("mensagemPagamento", "");
+      $("painelPagamento").classList.add("visivel");
+      $("painelPagamento").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function fecharPagamento() {
+      osPagamento = null;
+      $("painelPagamento").classList.remove("visivel");
+    }
+
+    $("formOS").addEventListener("submit", async function(evento) {
+      evento.preventDefault();
+      const botao = $("botaoSalvar");
+      const dados = Object.fromEntries(new FormData(this).entries());
+      botao.disabled = true;
+      botao.textContent = "Salvando...";
+      mensagem("mensagemCadastro", "");
+
+      try {
+        const resposta = await chamarServidor("salvarOS", dados);
+        mensagem("mensagemCadastro", resposta);
+        this.reset();
+        $("valor").value = "0";
+        await carregarOrdens();
+      } catch (erro) {
+        mensagem("mensagemCadastro", erro.message, true);
+      } finally {
+        botao.disabled = false;
+        botao.textContent = "Salvar Ordem de Serviço";
+      }
+    });
+
+    $("formPagamento").addEventListener("submit", async function(evento) {
+      evento.preventDefault();
+      if (!osPagamento) return;
+      const botao = $("botaoPagamento");
+      botao.disabled = true;
+
+      try {
+        await chamarServidor(
+          "registrarPagamento",
+          osPagamento,
+          $("valorPagamento").value,
+          $("formaPagamento").value
         );
-        $("pagamentoDescricao").textContent = os.numero + " - " + os.nome;
-        $("pagamentoSaldo").textContent = "Valor pendente: " + moeda(saldo);
-        $("valorPagamento").value = saldo.toFixed(2);
-        $("valorPagamento").max = saldo.toFixed(2);
-        mensagem("mensagemPagamento", "");
-        $("painelPagamento").classList.add("visivel");
-        $("painelPagamento").scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
+        fecharPagamento();
+        await carregarOrdens();
+      } catch (erro) {
+        mensagem("mensagemPagamento", erro.message, true);
+      } finally {
+        botao.disabled = false;
       }
+    });
 
-      function fecharPagamento() {
-        osPagamento = null;
-        $("painelPagamento").classList.remove("visivel");
-      }
-
-      $("formOS").addEventListener("submit", async function (evento) {
-        evento.preventDefault();
-        const botao = $("botaoSalvar");
-        const dados = Object.fromEntries(new FormData(this).entries());
-        botao.disabled = true;
-        botao.textContent = "Salvando...";
-        mensagem("mensagemCadastro", "");
-
-        try {
-          const resposta = await chamarServidor("salvarOS", dados);
-          mensagem("mensagemCadastro", resposta);
-          this.reset();
-          $("valor").value = "0";
-          await carregarOrdens();
-        } catch (erro) {
-          mensagem("mensagemCadastro", erro.message, true);
-        } finally {
-          botao.disabled = false;
-          botao.textContent = "Salvar Ordem de Serviço";
-        }
-      });
-
-      $("formPagamento").addEventListener("submit", async function (evento) {
-        evento.preventDefault();
-        if (!osPagamento) return;
-        const botao = $("botaoPagamento");
-        botao.disabled = true;
-
-        try {
-          await chamarServidor(
-            "registrarPagamento",
-            osPagamento,
-            $("valorPagamento").value,
-            $("formaPagamento").value,
-          );
-          fecharPagamento();
-          await carregarOrdens();
-        } catch (erro) {
-          mensagem("mensagemPagamento", erro.message, true);
-        } finally {
-          botao.disabled = false;
-        }
-      });
-
-      preencherStatus();
-      abrirPagina("dashboard");
-    </script>
-  </body>
+    preencherStatus();
+    abrirPagina("dashboard");
+  </script>
+</body>
 </html>
