@@ -1,378 +1,873 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
   <base target="_top">
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script>
+    (function () {
+      try {
+        document.documentElement.dataset.tema = localStorage.getItem("geradorOS.tema") === "escuro" ? "escuro" : "claro";
+      } catch (e) { document.documentElement.dataset.tema = "claro"; }
+    })();
+  </script>
   <style>
-    :root {
-      --azul: #123d70;
-      --azul-escuro: #0c2d52;
-      --azul-claro: #eaf2ff;
-      --fundo: #f3f6fa;
-      --texto: #1f2937;
-      --suave: #64748b;
-      --borda: #dce3ec;
-      --verde: #15803d;
-      --vermelho: #b91c1c;
-      --amarelo: #a16207;
-      --sombra: 0 3px 14px rgba(15, 45, 82, .07);
-      --raio: 12px;
+    * {
+      box-sizing: border-box;
     }
 
-    * { box-sizing: border-box; }
+    :root {
+      --azul: #0f3d73;
+      --azul-escuro: #0a2c52;
+      --azul-claro: #eaf2ff;
+      --fundo: #f4f7fb;
+      --branco: #ffffff;
+      --texto: #1f2937;
+      --texto-suave: #6b7280;
+      --borda: #e5e7eb;
+      --verde: #16a34a;
+      --vermelho: #dc2626;
+      --amarelo: #d97706;
+      --sombra: 0 6px 20px rgba(15, 61, 115, 0.08);
+      --radius: 16px;
+    }
 
     body {
       margin: 0;
+      font-family: Arial, sans-serif;
       background: var(--fundo);
       color: var(--texto);
-      font-family: Arial, sans-serif;
     }
 
-    .app { min-height: 100vh; display: flex; }
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
 
     .sidebar {
-      width: 230px;
-      flex-shrink: 0;
+      width: 240px;
       background: linear-gradient(180deg, var(--azul), var(--azul-escuro));
       color: white;
-      padding: 22px 14px;
+      padding: 24px 18px;
       display: flex;
       flex-direction: column;
-      gap: 22px;
+      gap: 18px;
+      box-shadow: 4px 0 18px rgba(0,0,0,.08);
     }
 
-    .brand h1 { margin: 0; font-size: 23px; }
-    .menu { display: grid; gap: 9px; }
+    .brand h1 {
+      font-size: 26px;
+      margin: 0;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      color: #d9e7ff;
+      line-height: 1.5;
+    }
+
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
 
     .menu button {
-      width: 100%;
-      padding: 13px 14px;
-      color: white;
       background: transparent;
-      border: 1px solid rgba(255,255,255,.2);
-      border-radius: 9px;
-      text-align: left;
-      font-size: 15px;
-      font-weight: 700;
+      color: white;
+      border: 1px solid rgba(255,255,255,.15);
+      padding: 14px 16px;
+      border-radius: 12px;
       cursor: pointer;
+      text-align: left;
+      font-size: 16px;
+      font-weight: bold;
+      transition: .2s;
     }
 
-    .menu button:hover, .menu button.ativo {
+    .menu button:hover {
+      background: rgba(255,255,255,.10);
+    }
+
+    .menu button.ativo {
       background: #2563eb;
       border-color: #2563eb;
     }
 
-    .content { flex: 1; min-width: 0; padding: 20px; }
-
-    .topbar, .card, .resumo-card {
-      background: white;
-      border-radius: var(--raio);
-      box-shadow: var(--sombra);
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      font-size: 13px;
+      color: #d9e7ff;
+      line-height: 1.5;
     }
 
-    .topbar { padding: 17px 20px; margin-bottom: 18px; }
-    .topbar h2 { margin: 0; color: var(--azul); font-size: 24px; }
+    .content {
+      flex: 1;
+      padding: 24px;
+    }
 
-    .pagina { display: none; }
-    .pagina.ativa { display: block; }
+    .topbar {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--sombra);
+      margin-bottom: 24px;
+    }
 
-    .card { padding: 20px; margin-bottom: 18px; }
-    .card h3 { margin: 0 0 6px; color: var(--azul); font-size: 20px; }
-    .subtitulo { margin: 0 0 18px; color: var(--suave); font-size: 14px; }
+    .topbar h2 {
+      margin: 0;
+      color: var(--azul);
+      font-size: 28px;
+    }
+
+    .topbar p {
+      margin: 6px 0 0;
+      color: var(--texto-suave);
+      font-size: 14px;
+    }
+
+    .pagina {
+      display: none;
+    }
+
+    .pagina.ativa {
+      display: block;
+    }
+
+    .card {
+      background: var(--branco);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--sombra);
+      margin-bottom: 22px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      color: var(--azul);
+      font-size: 22px;
+    }
+
+    .card p.subtitulo {
+      margin: 0 0 20px;
+      color: var(--texto-suave);
+      font-size: 14px;
+    }
 
     .secao-titulo {
+      font-size: 18px;
       color: var(--azul);
-      font-weight: 700;
-      margin: 22px 0 14px;
-      padding-bottom: 9px;
+      margin: 24px 0 14px;
+      padding-bottom: 10px;
       border-bottom: 1px solid var(--borda);
     }
 
-    .campos { display: grid; grid-template-columns: 1fr; gap: 14px; }
-    .campo { min-width: 0; }
+    .campos {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 16px;
+    }
+
+    .campo-completo {
+      grid-column: 1 / -1;
+    }
 
     label {
       display: block;
-      margin-bottom: 7px;
+      font-weight: bold;
+      margin-bottom: 8px;
       color: #374151;
-      font-weight: 700;
-      font-size: 14px;
     }
 
     input, select, textarea {
       width: 100%;
-      min-height: 44px;
-      padding: 11px 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 9px;
-      background: white;
-      color: var(--texto);
-      font: inherit;
+      padding: 14px;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
       font-size: 16px;
+      background: #fff;
+      color: var(--texto);
     }
 
-    textarea { min-height: 90px; resize: vertical; }
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+      box-shadow: 0 0 0 4px rgba(37,99,235,.12);
     }
 
-    .acoes { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+    textarea {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    .acoes {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
 
     .botao {
-      border: 0;
-      border-radius: 9px;
-      padding: 12px 17px;
-      min-height: 44px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .primario { background: #2563eb; color: white; }
-    .primario:hover { background: #1d4ed8; }
-    .secundario { background: #e9eef5; color: #334155; }
-    .perigo { background: #fee2e2; color: #991b1b; }
-    .botao:disabled { opacity: .6; cursor: wait; }
-
-    .mensagem { min-height: 20px; margin-top: 13px; font-weight: 700; }
-    .sucesso { color: var(--verde); }
-    .erro { color: var(--vermelho); }
-
-    .filtros { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 16px 0; }
-    .resumo { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
-    .resumo-card { padding: 17px; border-left: 4px solid #2563eb; }
-    .dashboard-busca { margin-bottom: 18px; }
-    .dashboard-colunas { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); gap: 18px; align-items: start; }
-    .dashboard-coluna { min-width: 0; }
-    .dashboard-coluna h3 { margin-bottom: 14px; }
-    .dashboard-coluna .lista-os { max-width: none; margin: 0; }
-    .financeiro-filtros { display: grid; grid-template-columns: repeat(2, minmax(0, 220px)); gap: 12px; margin: 16px 0; }
-    .resumo-card span { display: block; color: var(--suave); font-size: 13px; margin-bottom: 7px; }
-    .resumo-card strong { color: var(--azul); font-size: 25px; }
-
-    .lista-os { display: grid; gap: 12px; max-width: none; margin: 0; }
-    .os-card {
-      background: white;
-      border: 1px solid var(--borda);
+      border: none;
       border-radius: 12px;
-      padding: 16px;
-      box-shadow: var(--sombra);
+      padding: 14px 22px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: .2s;
     }
 
-    .os-cabecalho { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-    .os-numero { color: var(--azul); font-weight: 700; overflow-wrap: anywhere; }
-    .os-data { color: var(--suave); font-size: 13px; margin-top: 4px; }
-    .os-info { display: grid; gap: 7px; margin: 13px 0; font-size: 14px; }
-    .os-info strong { color: #334155; }
-    .os-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn-mini {
-      border: 0; border-radius: 8px; padding: 10px 12px;
-      background: var(--azul-claro); color: var(--azul);
-      font-weight: 700; cursor: pointer;
+    .botao-primario {
+      background: #2563eb;
+      color: white;
+    }
+
+    .botao-primario:hover {
+      background: #1d4ed8;
+    }
+
+    .botao-secundario {
+      background: #eef2f7;
+      color: #374151;
+    }
+
+    .botao-secundario:hover {
+      background: #e5e7eb;
+    }
+
+    .botao:disabled {
+      opacity: .6;
+      cursor: wait;
+    }
+
+    .mensagem {
+      min-height: 20px;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .sucesso {
+      color: var(--verde);
+    }
+
+    .erro {
+      color: var(--vermelho);
+    }
+
+    .barra-pesquisa {
+      margin-bottom: 18px;
+    }
+
+    .filtros {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .filtros .campo-data {
+      min-width: 0;
+    }
+
+    .filtros label {
+      font-size: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .filtros {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--borda);
+      border-radius: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      background: white;
+    }
+
+    th, td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--borda);
+      text-align: left;
+      vertical-align: middle;
+      font-size: 15px;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #475569;
+      font-size: 14px;
+    }
+
+    td small {
+      display: block;
+      color: var(--texto-suave);
+      margin-top: 4px;
     }
 
     .status {
-      display: inline-block; padding: 7px 10px; border-radius: 30px;
-      background: #e2e8f0; color: #334155; font-size: 12px; font-weight: 700;
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+      background: #e5e7eb;
+      color: #374151;
       white-space: nowrap;
     }
-    .status.concluido { background: #dcfce7; color: #166534; }
-    .status.entregue { background: #dbeafe; color: #1d4ed8; }
-    .status.cancelado { background: #fee2e2; color: #991b1b; }
-    .status.aviso { background: #fef3c7; color: #92400e; }
 
-    .detalhes, .painel-pagamento { display: none; }
-    .detalhes.visivel, .painel-pagamento.visivel { display: block; }
-    .info-linha { margin: 9px 0; line-height: 1.5; overflow-wrap: anywhere; }
-    .vazio { padding: 24px; text-align: center; color: var(--suave); background: white; border-radius: 10px; }
-
-    .tabela-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 680px; background: white; }
-    th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--borda); font-size: 14px; }
-    th { background: #f8fafc; color: #475569; }
-
-    @media (max-width: 760px) {
-      .app { display: block; }
-      .sidebar { width: 100%; padding: 14px; gap: 14px; }
-      .brand h1 { font-size: 21px; }
-      .menu { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .menu button { text-align: center; padding: 12px 8px; font-size: 14px; }
-      .content { padding: 12px; }
-      .topbar { padding: 15px; margin-bottom: 12px; }
-      .topbar h2 { font-size: 21px; }
-      .card { padding: 15px; }
-      .resumo { grid-template-columns: 1fr; }
-      .dashboard-colunas { grid-template-columns: 1fr; }
-      .financeiro-filtros { grid-template-columns: 1fr; }
-      .os-cabecalho { display: block; }
-      .os-cabecalho .status { margin-top: 9px; }
-      .botao { width: 100%; }
-      .acoes { display: grid; grid-template-columns: 1fr; }
+    .status.concluido,
+    .status.entregue {
+      background: #dcfce7;
+      color: #166534;
     }
-  </style>
+
+    .status.cancelado {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status.aviso {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .btn-mini {
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #eaf2ff;
+      color: #0f3d73;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-mini:hover {
+      background: #d9e9ff;
+    }
+
+    .cards-resumo {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 18px;
+      margin-bottom: 22px;
+    }
+
+    .mini-card {
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--sombra);
+      padding: 22px;
+      border-left: 5px solid #2563eb;
+    }
+
+    .mini-card span {
+      display: block;
+      color: var(--texto-suave);
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .mini-card strong {
+      font-size: 28px;
+      color: var(--azul);
+    }
+
+    .detalhes {
+      display: none;
+    }
+
+    .detalhes.visivel {
+      display: block;
+    }
+
+    .info-linha {
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+
+    .info-linha strong {
+      color: #374151;
+    }
+
+    .vazio {
+      text-align: center;
+      color: var(--texto-suave);
+      padding: 26px;
+    }
+
+    .destaque-info {
+      background: #eff6ff;
+      color: var(--azul);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .app {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+      }
+
+      .menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .menu button {
+        flex: 1;
+        min-width: 150px;
+      }
+
+      .cards-resumo,
+      .campos {
+        grid-template-columns: 1fr;
+      }
+
+      .content {
+        padding: 16px;
+      }
+
+      .topbar {
+        padding: 18px;
+      }
+
+      .topbar h2 {
+        font-size: 24px;
+      }
+    }
+  
+    /* Refinamento visual: vidro fosco, luz difusa e contraste legível. */
+    :root { --fundo:#e8eff8; --texto:#172b43; --texto-suave:#52647a; --radius:20px; --sombra:0 12px 32px rgba(30,58,100,.09); }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background:radial-gradient(ellipse at 85% 5%,#bcd9ff88,transparent 42%),radial-gradient(ellipse at 15% 95%,#c1e6ed88,transparent 45%),linear-gradient(135deg,#f0f5fc,#e1eaf6); background-attachment:fixed; }
+    .app { gap:0; }
+    .sidebar { flex-shrink:0; width:248px; margin:16px 0 16px 16px; border-radius:24px; padding:26px 18px; background:radial-gradient(ellipse at 10% 0%,#397bc477,transparent 48%),linear-gradient(160deg,#163e70,#102746 85%); border:1px solid #ffffff26; box-shadow:0 16px 38px #12365d30,inset 0 1px 0 #ffffff30; }
+    .brand { padding:4px 8px 18px; border-bottom:1px solid #ffffff22; }
+    .brand h1 { letter-spacing:-.6px; font-size:25px; }
+    .brand p,.sidebar-footer { color:#d9e8fa; }
+    .menu button { display:flex; align-items:center; gap:12px; background:#ffffff08; border-color:#ffffff19; min-height:52px; transition:background .2s,box-shadow .2s,transform .2s; }
+    .menu button svg { width:21px;height:21px;flex:none; }
+    .menu button:hover { background:#ffffff19; }
+    .menu button.ativo { background:linear-gradient(115deg,#3274db,#2456b5); border-color:#ffffff30; box-shadow:0 8px 22px #071e5055,inset 0 1px 0 #ffffff44; }
+    .content { min-width:0; padding:16px 24px 24px; }
+    .topbar,.card,.mini-card { background:linear-gradient(140deg,#fffffff2,#ffffffb8); border:1px solid #ffffffdc; box-shadow:var(--sombra),inset 0 1px 0 #fff; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); }
+    .topbar { background:radial-gradient(ellipse at 100% 0%,#d6e8ff99,transparent 60%),linear-gradient(120deg,#fffffff5,#ffffffb8); padding:24px 28px; }
+    .topbar h2 { letter-spacing:-.6px; }
+    .card { padding:26px; }
+    .secao-titulo { font-weight:650; border-bottom:1px solid #b5c8dd66; display:flex;align-items:center;gap:9px; }
+    .secao-titulo::before { content:''; width:4px;height:18px;border-radius:5px;background:#4380d3; }
+    input,select,textarea { font-family:inherit; background:#ffffffb8; border:1px solid #a8b9ce; box-shadow:inset 0 2px 5px #294b7610; transition:border-color .2s,box-shadow .2s,background .2s; }
+    input::placeholder,textarea::placeholder { color:#63758b; }
+    input:focus,select:focus,textarea:focus { background:white; border-color:#3976ce; box-shadow:0 0 0 4px #3976ce22; }
+    .botao-primario { background:linear-gradient(125deg,#2e70d6,#1b4fae); box-shadow:0 7px 16px #245ab52e,inset 0 1px 0 #ffffff33; }
+    .botao-secundario { background:#e5edf8; border:1px solid #c5d4e7; }
+    .botao,.btn-mini { min-height:44px; }
+    button:focus-visible { outline:3px solid #659cf1;outline-offset:3px; }
+    .table-wrap { background:#ffffffb3; border-color:#c9d7e6; }
+    table { background:transparent; }
+    th { background:#e8eff8; color:#344e6c; }
+    td,th { border-bottom-color:#dce5ef; padding:15px 13px; }
+    tbody tr:last-child td { border-bottom:0; }
+    tbody tr:hover { background:#e9f2ff88; }
+    .btn-mini { background:#e4edfc; border:1px solid #c6d9f4; }
+    .status { display:inline-flex; align-items:center;gap:7px; }
+    .status::before { content:'';width:7px;height:7px;border-radius:50%;background:currentColor; }
+    .mini-card { position:relative; overflow:hidden; border-left:4px solid #3773cc; padding:24px; }
+    .mini-card::after { content:''; position:absolute;right:-32px;top:-46px;width:145px;height:145px;border-radius:50%;background:radial-gradient(circle,#8ab9ff40,transparent 70%);pointer-events:none; }
+    .mini-card:nth-child(2) { border-left-color:#29906d; background:linear-gradient(135deg,#ffffffef,#e4f5edc9); }
+    .mini-card:nth-child(2) strong { color:#176b4e; }
+    .mini-card:nth-child(3) { border-left-color:#c58a29;background:linear-gradient(135deg,#ffffffef,#fff3dac9); }
+    .mini-card:nth-child(3) strong { color:#8a510d; }
+    .mini-card strong { font-variant-numeric:tabular-nums;overflow-wrap:anywhere; }
+    .destaque-info { border:1px solid #c4d9f2; background:#e5effcc9; }
+    .info-linha { background:#ffffff9c; border:1px solid #dbe5ef; border-radius:12px;padding:12px 14px; overflow-wrap:anywhere; }
+    .mensagem:empty { min-height:0;margin-top:0; }
+    .pagina.ativa { animation:entrada .22s ease-out; }
+    @keyframes entrada { from {opacity:.65;transform:translateY(4px);} to {opacity:1;transform:none;} }
+    @media(min-width:961px) { .sidebar { position:sticky;top:16px;height:calc(100vh - 32px);overflow-y:auto; } }
+    @media(max-width:960px) { .sidebar { width:auto;margin:12px 12px 0; } .content {padding:12px;} .card,.topbar {padding:20px;} .menu button {min-width:130px;} }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after {animation:none!important;transition:none!important;scroll-behavior:auto!important;} }
+
+  
+    /* Alternância de tema */
+    .tema-toggle { display:inline-flex; align-items:center; gap:9px; flex-shrink:0; padding:12px 16px; min-height:46px; border:1px solid #b8cce4; border-radius:13px; background:#ffffffa8; color:#234c7e; font:inherit; font-weight:600; cursor:pointer; box-shadow:0 4px 12px #1a457010; }
+    .tema-toggle:hover { background:#e4efff; }
+    .tema-toggle svg { width:21px; height:21px; flex:none; }
+    .topbar { gap:16px; flex-wrap:wrap; }
+    html[data-tema="escuro"] { color-scheme:dark; --fundo:#0b1322; --branco:#162337; --texto:#e5eefb; --texto-suave:#b1c0d4; --azul:#a8ceff; --azul-escuro:#101c30; --azul-claro:#233953; --borda:#34465f; --verde:#79e0b0; --vermelho:#ff9b9b; --sombra:0 12px 32px #00000038; }
+    html[data-tema="escuro"] body { background:radial-gradient(ellipse at 88% 0%,#234b7e65,transparent 45%),radial-gradient(ellipse at 10% 100%,#14535b38,transparent 45%),linear-gradient(145deg,#0b1322,#101c30); background-attachment:fixed; }
+    html[data-tema="escuro"] .sidebar { background:radial-gradient(ellipse at 15% 0%,#356caa40,transparent 50%),linear-gradient(155deg,#162e4e,#0c172a); border-color:#415e823d; box-shadow:0 16px 38px #0005,inset 0 1px 0 #ffffff15; }
+    html[data-tema="escuro"] .topbar,html[data-tema="escuro"] .card,html[data-tema="escuro"] .mini-card { background:linear-gradient(145deg,#21334bea,#162337dd); border-color:#49617b65; box-shadow:var(--sombra),inset 0 1px 0 #ffffff10; }
+    html[data-tema="escuro"] .topbar { background:radial-gradient(ellipse at 100% 0%,#37669c42,transparent 65%),linear-gradient(120deg,#233650,#18283d); }
+    html[data-tema="escuro"] label,html[data-tema="escuro"] .info-linha strong { color:#d9e6f7; }
+    html[data-tema="escuro"] .secao-titulo { border-bottom-color:#455a7366; }
+    html[data-tema="escuro"] input,html[data-tema="escuro"] select,html[data-tema="escuro"] textarea { background:#0e1b2cce; border-color:#4b607b; color:#e5eefb; box-shadow:inset 0 2px 5px #0002; }
+    html[data-tema="escuro"] input::placeholder,html[data-tema="escuro"] textarea::placeholder { color:#a1b2c8; }
+    html[data-tema="escuro"] input:focus,html[data-tema="escuro"] select:focus,html[data-tema="escuro"] textarea:focus { background:#14243a; border-color:#83b6ff; box-shadow:0 0 0 4px #629af330; }
+    html[data-tema="escuro"] select option { background:#17273d; color:#e5eefb; }
+    html[data-tema="escuro"] .table-wrap { background:#132136b8; border-color:#40536e; }
+    html[data-tema="escuro"] th { background:#253b56; color:#d7e5f6; }
+    html[data-tema="escuro"] td,html[data-tema="escuro"] th { border-bottom-color:#34465f; }
+    html[data-tema="escuro"] tbody tr:hover { background:#416a9a26; }
+    html[data-tema="escuro"] .botao-secundario,html[data-tema="escuro"] .btn-mini,html[data-tema="escuro"] .tema-toggle { background:#263d59; color:#d5e7ff; border-color:#496481; }
+    html[data-tema="escuro"] .botao-secundario:hover,html[data-tema="escuro"] .btn-mini:hover,html[data-tema="escuro"] .tema-toggle:hover { background:#355477; }
+    html[data-tema="escuro"] .status { background:#33465d; color:#e0eafa; }
+    html[data-tema="escuro"] .status.concluido,html[data-tema="escuro"] .status.entregue { background:#174938; color:#9be8bf; }
+    html[data-tema="escuro"] .status.cancelado { background:#542c39; color:#ffc0c0; }
+    html[data-tema="escuro"] .status.aviso { background:#513b20; color:#ffdc95; }
+    html[data-tema="escuro"] .mini-card { border-left-color:#77adff; }
+    html[data-tema="escuro"] .mini-card:nth-child(2) { background:linear-gradient(135deg,#20354a,#153c35); border-left-color:#68cda0; }
+    html[data-tema="escuro"] .mini-card:nth-child(2) strong { color:#9be8bf; }
+    html[data-tema="escuro"] .mini-card:nth-child(3) { background:linear-gradient(135deg,#23354b,#403526); border-left-color:#e7bc66; }
+    html[data-tema="escuro"] .mini-card:nth-child(3) strong { color:#ffda91; }
+    html[data-tema="escuro"] .destaque-info { background:#203b5a; color:#d2e6ff; border-color:#45668c; }
+    html[data-tema="escuro"] .info-linha { background:#142439b8; border-color:#344b65; }
+
+
+    .modal-os { position: fixed; inset: 0; margin: auto; width: min(780px, calc(100% - 32px)); max-height: 88vh; overflow: auto; color: var(--texto); border: 1px solid var(--borda); border-radius: 22px; padding: 26px; background: #f4f8ff; }
+    .modal-os::backdrop { background: rgba(5,15,30,.66); backdrop-filter: blur(5px); }
+    .modal-cabecalho { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px; }
+    #conteudoDetalhes { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    #conteudoDetalhes .info-linha { margin:0; white-space:pre-wrap; }
+    #conteudoDetalhes .info-linha strong { display:block; margin-bottom:4px; }
+    #conteudoDetalhes .info-linha.ampla { grid-column:1/-1; }
+    html[data-tema="escuro"] .modal-os { background:#1b2c43; }
+    @media(max-width:600px) { #conteudoDetalhes { grid-template-columns:1fr; } .modal-os {padding:18px;} }
+  
+    /* Painel financeiro */
+    .fin-filtros {display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr auto;gap:12px;align-items:end;margin-bottom:16px}
+    .fin-kpis {grid-template-columns:repeat(4,minmax(0,1fr))}
+    .fin-kpis .mini-card strong {font-size:clamp(20px,2vw,30px)}
+    .fin-kpis .mini-card small {display:block;margin-top:9px;color:var(--texto-suave)}
+    .fin-graficos {display:grid;grid-template-columns:1.6fr 1fr;gap:18px;align-items:stretch}
+    .fin-graficos .card {min-width:0}
+    .fin-legenda {display:flex;flex-wrap:wrap;gap:16px;font-size:13px;color:var(--texto-suave);margin:14px 0}
+    .fin-legenda i {display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+    .fin-barras {display:grid;gap:12px;max-height:340px;overflow:auto;padding-right:5px}
+    .fin-linha {display:grid;grid-template-columns:78px minmax(0,1fr);gap:10px;align-items:center;font-size:13px}
+    .fin-trilho {height:22px;border-radius:6px;background:rgba(128,150,180,.12);display:flex;overflow:hidden;margin:4px 0}
+    .fin-barra {height:100%;min-width:0;transition:width .25s}
+    .fin-rosca {width:168px;height:168px;border-radius:50%;margin:16px auto;display:grid;place-items:center;position:relative;background:#94a3b833}
+    .fin-rosca::before {content:'';position:absolute;inset:22px;border-radius:50%;background:#f5f8fc}
+    html[data-tema="escuro"] .fin-rosca::before {background:#1a2b41}
+    .fin-rosca div {z-index:1;text-align:center;color:var(--texto);font-size:13px}
+    .fin-rosca strong {display:block;font-size:30px;color:var(--azul)}
+    .fin-resumo {display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--borda)}
+    .fin-cab {display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+    .fin-cab h3 {margin:0}.fin-cab p {margin:6px 0 0;color:var(--texto-suave)}
+    @media(max-width:1250px){.fin-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.fin-filtros{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.fin-graficos,.fin-filtros,.fin-kpis{grid-template-columns:1fr}}
+</style>
 </head>
+
 <body>
   <div class="app">
     <aside class="sidebar">
-      <div class="brand"><h1>Gerador de OS</h1></div>
-      <nav class="menu">
-        <button id="menu-dashboard" class="ativo" onclick="abrirPagina('dashboard')">Painel inicial</button>
-        <button id="menu-cadastro" onclick="abrirPagina('cadastro')">Nova OS</button>
-        <button id="menu-historico" onclick="abrirPagina('historico')">Histórico</button>
-        <button id="menu-financeiro" onclick="abrirPagina('financeiro')">Financeiro</button>
-      </nav>
+      <div class="brand">
+        <h1>OS Tech</h1>
+        <p>Gestão de Ordens de Serviço<br>Assistência Técnica</p>
+      </div>
+
+      <div class="menu">
+        <button id="menu-cadastro" class="ativo" onclick="abrirPagina('cadastro')"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Nova OS</button>
+        <button id="menu-historico" onclick="abrirPagina('historico')"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Histórico</button>
+        <button id="menu-abertas" onclick="abrirPagina('abertas')"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 9h8M8 13h5"/></svg>Em aberto</button>
+        <button id="menu-financeiro" onclick="abrirPagina('financeiro')"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M15 15h3"/></svg>Financeiro</button>
+      </div>
+
+      <div class="sidebar-footer">
+        Sistema feito para uso simples e rápido.<br>
+        Ideal para atendimento do dia a dia.
+      </div>
     </aside>
 
     <main class="content">
-      <header class="topbar"><h2 id="tituloPagina">Ordens em aberto</h2></header>
+      <div class="topbar">
+        <div>
+          <h2 id="tituloPagina">Nova Ordem de Serviço</h2>
+          <p id="subtituloPagina">Cadastre os dados do cliente e do equipamento.</p>
+        </div>
+        <button type="button" id="botaoTema" class="tema-toggle" aria-pressed="false" onclick="alternarTema()">
+          <svg id="iconeTema" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.9 13.4A9 9 0 0 1 10.6 3.1 9 9 0 1 0 20.9 13.4Z"/></svg>
+          <span id="textoTema">Modo escuro</span>
+        </button>
+      </div>
 
-      <section id="dashboard" class="pagina ativa">
-        <div class="card dashboard-busca">
-          <div class="campo">
-            <label for="buscaDashboard">Pesquisar por cliente, telefone, ID ou número da OS</label>
-            <input id="buscaDashboard" type="search" placeholder="Digite para pesquisar..." oninput="mostrarDashboard()">
-          </div>
-          <div class="campo" style="margin-top:12px">
-            <label for="dataDashboard">Data de entrada</label>
-            <input id="dataDashboard" type="date" oninput="mostrarDashboard()">
-          </div>
-        </div>
-        <div class="resumo">
-          <div class="resumo-card"><span>Ordens em aberto</span><strong id="qtdAbertas">0</strong></div>
-          <div class="resumo-card"><span>Em manutenção</span><strong id="qtdManutencao">0</strong></div>
-          <div class="resumo-card"><span>Aguardando aprovação ou peças</span><strong id="qtdAguardando">0</strong></div>
-        </div>
-        <div class="dashboard-colunas">
-          <section class="card dashboard-coluna">
-            <h3>Em andamento</h3>
-            <div id="listaDashboard" class="lista-os"></div>
-          </section>
-          <section class="card dashboard-coluna">
-            <h3>Encerradas</h3>
-            <div id="listaEncerradas" class="lista-os"></div>
-          </section>
-        </div>
-      </section>
-
-      <section id="cadastro" class="pagina">
+      <!-- CADASTRO -->
+      <section id="cadastro" class="pagina ativa">
         <div class="card">
           <h3>Cadastro de OS</h3>
-          <p class="subtitulo">Preencha os dados do cliente e do equipamento.</p>
+          <p class="subtitulo">Preencha as informações abaixo com calma e salve a ordem de serviço.</p>
+
           <form id="formOS">
             <div class="secao-titulo">Dados do cliente</div>
             <div class="campos">
-              <div class="campo"><label for="nome">Nome do cliente *</label><input id="nome" type="text" name="nome" required></div>
-              <div class="campo"><label for="telefone">Telefone *</label><input id="telefone" type="tel" name="telefone" required></div>
+              <div>
+                <label>Nome do cliente *</label>
+                <input type="text" name="nome" required>
+              </div>
+
+              <div>
+                <label>Telefone *</label>
+                <input type="tel" name="telefone" required>
+              </div>
             </div>
 
             <div class="secao-titulo">Dados do equipamento</div>
             <div class="campos">
-              <div class="campo"><label for="marca">Marca da TV</label><input id="marca" type="text" name="marca"></div>
-              <div class="campo"><label for="polegadas">Polegadas</label><input id="polegadas" type="number" name="polegadas" min="1"></div>
-              <div class="campo"><label for="diagnostico">Diagnóstico</label><textarea id="diagnostico" name="diagnostico" placeholder="Ex.: TV não liga, tela escura, sem áudio..."></textarea></div>
-              <div class="campo"><label for="servico">Serviço realizado ou previsto</label><textarea id="servico" name="servico"></textarea></div>
+              <div>
+                <label>Marca da TV *</label>
+                <input type="text" name="marca" required>
+              </div>
+
+              <div>
+                <label>Polegadas</label>
+                <input type="number" name="polegadas" min="1">
+              </div>
+
+              <div class="campo-completo">
+                <label>Diagnóstico</label>
+                <textarea name="diagnostico" placeholder="Ex.: TV não liga, tela escura, sem áudio..."></textarea>
+              </div>
+
+              <div class="campo-completo">
+                <label>Serviço realizado ou previsto</label>
+                <textarea name="servico"></textarea>
+              </div>
             </div>
 
             <div class="secao-titulo">Informações da OS</div>
             <div class="campos">
-              <div class="campo"><label for="valor">Valor (R$)</label><input id="valor" type="number" name="valor" step="0.01" min="0" value="0"></div>
-              <div class="campo"><label for="statusCadastro">Status</label><select name="status" id="statusCadastro"></select></div>
-              <div class="campo"><label for="observacoes">Observações</label><textarea id="observacoes" name="observacoes"></textarea></div>
+              <div>
+                <label>Valor (R$)</label>
+                <input type="number" name="valor" step="0.01" min="0" value="0">
+              </div>
+
+              <div>
+                <label>Status</label>
+                <select name="status" id="statusCadastro"></select>
+              </div>
+
+              <div class="campo-completo">
+                <label>Observações</label>
+                <textarea name="observacoes"></textarea>
+              </div>
             </div>
+
             <div class="acoes">
-              <button class="botao primario" type="submit" id="botaoSalvar">Salvar Ordem de Serviço</button>
-              <button class="botao secundario" type="reset">Limpar campos</button>
+              <button class="botao botao-primario" type="submit" id="botaoSalvar">Salvar Ordem de Serviço</button>
+              <button class="botao botao-secundario" type="reset">Limpar campos</button>
             </div>
+
             <div id="mensagemCadastro" class="mensagem"></div>
           </form>
         </div>
       </section>
 
+      <!-- HISTÓRICO -->
       <section id="historico" class="pagina">
         <div class="card">
           <h3>Histórico de OS</h3>
+          <p class="subtitulo">Pesquise pelo cliente, telefone, marca ou número da ordem de serviço.</p>
+
           <div class="filtros">
-            <div class="campo"><label for="pesquisaHistorico">Cliente, telefone, ID ou número da OS</label><input id="pesquisaHistorico" type="search" placeholder="Pesquisar..." oninput="mostrarHistorico()"></div>
-            <div class="campo"><label for="dataInicio">Data inicial</label><input id="dataInicio" type="date" oninput="mostrarHistorico()"></div>
-            <div class="campo"><label for="dataFim">Data final</label><input id="dataFim" type="date" oninput="mostrarHistorico()"></div>
+            <div>
+              <label for="filtroNome">Nome do cliente</label>
+              <input id="filtroNome" type="text" placeholder="Nome do cliente" oninput="mostrarHistorico()">
+            </div>
+            <div>
+              <label for="filtroIdentificador">Número da OS ou ID do cliente</label>
+              <input id="filtroIdentificador" type="text" placeholder="OS ou ID do cliente" oninput="mostrarHistorico()">
+            </div>
+            <div>
+              <label for="filtroTelefone">Telefone</label>
+              <input id="filtroTelefone" type="text" placeholder="Telefone" oninput="mostrarHistorico()">
+            </div>
+            <div class="campo-data">
+              <label for="filtroDataInicio">Data inicial</label>
+              <input id="filtroDataInicio" type="date" onchange="mostrarHistorico()">
+            </div>
+            <div class="campo-data">
+              <label for="filtroDataFim">Data final</label>
+              <input id="filtroDataFim" type="date" onchange="mostrarHistorico()">
+            </div>
+            <div style="display:flex;align-items:end">
+              <button class="botao botao-secundario" type="button" onclick="limparFiltrosHistorico()">Limpar filtros</button>
+            </div>
           </div>
-          <div id="listaHistorico" class="lista-os"></div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>OS / Data</th>
+                  <th>Cliente</th>
+                  <th>Equipamento</th>
+                  <th>Status</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaHistorico"></tbody>
+            </table>
+          </div>
+
+          <div id="mensagemHistorico" class="mensagem"></div>
         </div>
+
       </section>
 
-      <section id="financeiro" class="pagina">
-        <div class="resumo">
-          <div class="resumo-card"><span>Total dos serviços</span><strong id="totalServicos">R$ 0,00</strong></div>
-          <div class="resumo-card"><span>Valor recebido</span><strong id="totalRecebido">R$ 0,00</strong></div>
-          <div class="resumo-card"><span>Valor pendente</span><strong id="totalPendente">R$ 0,00</strong></div>
-        </div>
+      <!-- ORDENS EM ABERTO -->
+      <section id="abertas" class="pagina">
         <div class="card">
-          <h3>Pagamentos das OS</h3>
-          <div class="financeiro-filtros">
-            <div class="campo"><label for="filtroMesFinanceiro">Mês de entrada da OS</label><select id="filtroMesFinanceiro" onchange="mostrarFinanceiro()"><option value="">Todos os meses</option></select></div>
-            <div class="campo"><label for="filtroAnoFinanceiro">Ano de entrada da OS</label><select id="filtroAnoFinanceiro" onchange="mostrarFinanceiro()"><option value="">Todos os anos</option></select></div>
+          <h3>Ordens em aberto</h3>
+          <p class="subtitulo">Acompanhe os serviços que ainda precisam de atendimento ou entrega.</p>
+          <div class="barra-pesquisa">
+            <label for="pesquisaAbertas">Pesquisar por cliente, telefone ou número da OS</label>
+            <input id="pesquisaAbertas" type="text" placeholder="Digite para pesquisar..." oninput="mostrarAbertas()">
           </div>
-          <div class="tabela-wrap">
+          <div class="table-wrap">
             <table>
-              <thead><tr><th>OS / Cliente</th><th>Total</th><th>Recebido</th><th>Pendente</th><th>Ação</th></tr></thead>
-              <tbody id="tabelaFinanceiro"></tbody>
+              <thead>
+                <tr>
+                  <th>OS / Data</th>
+                  <th>Cliente</th>
+                  <th>Equipamento</th>
+                  <th>Status</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaAbertas"></tbody>
             </table>
           </div>
         </div>
-        <div id="painelPagamento" class="card painel-pagamento">
+      </section>
+
+      <!-- FINANCEIRO -->
+      <section id="financeiro" class="pagina">
+        <div class="card">
+          <div class="fin-cab"><div><h3>Visão financeira</h3><p>Controle de receitas e valores a receber por ordem de serviço.</p></div><button class="botao botao-secundario" onclick="exportarFinanceiro()">Exportar CSV</button></div>
+          <div class="fin-filtros">
+            <div><label for="finBusca">Cliente ou OS</label><input id="finBusca" placeholder="Pesquisar..." oninput="mostrarFinanceiro()"></div>
+            <div><label for="finInicio">Abertura de</label><input id="finInicio" type="date" onchange="mostrarFinanceiro()"></div>
+            <div><label for="finFim">Abertura até</label><input id="finFim" type="date" onchange="mostrarFinanceiro()"></div>
+            <div><label for="finSituacao">Pagamento</label><select id="finSituacao" onchange="mostrarFinanceiro()"><option value="todos">Todos</option><option value="pendente">Pendente</option><option value="parcial">Parcial</option><option value="quitado">Quitado</option><option value="semvalor">Sem valor definido</option></select></div>
+            <button class="botao botao-secundario" onclick="limparFinanceiro()">Limpar</button>
+          </div>
+          <small id="finContagem" style="color:var(--texto-suave)" aria-live="polite"></small>
+        </div>
+        <div class="cards-resumo fin-kpis">
+          <div class="mini-card"><span>Total de serviços</span><strong id="totalServicos">R$ 0,00</strong><small>Valor das OS selecionadas</small></div>
+          <div class="mini-card"><span>Valor recebido</span><strong id="totalRecebido">R$ 0,00</strong><small>Pagamentos acumulados</small></div>
+          <div class="mini-card"><span>Valor pendente</span><strong id="totalPendente">R$ 0,00</strong><small>Saldo a receber</small></div>
+          <div class="mini-card"><span>Taxa de recebimento</span><strong id="finTaxa">0%</strong><small id="finPendentes">0 OS com saldo</small></div>
+        </div>
+        <div class="fin-graficos">
+          <div class="card"><h3>Serviços por mês</h3><p class="subtitulo">Valores das OS agrupados pelo mês de abertura, não pela data de pagamento.</p><div class="fin-legenda"><span><i style="background:#299e76"></i>Recebido</span><span><i style="background:#d8a347"></i>Pendente</span></div><div id="finBarras" class="fin-barras"></div></div>
+          <div class="card"><h3>Distribuição dos valores</h3><p class="subtitulo">Quanto já foi recebido do total.</p><div id="finRosca" class="fin-rosca" role="img"><div><strong id="finPercentual">0%</strong>Recebido</div></div><div class="fin-resumo"><span>Recebido</span><strong id="finRecGraf"></strong></div><div class="fin-resumo"><span>Pendente</span><strong id="finPenGraf"></strong></div></div>
+        </div>
+        <div class="card"><div class="fin-cab"><div><h3>Pagamentos das OS</h3><p>Consulte saldos e registre recebimentos.</p></div></div>
+          <div class="table-wrap"><table><thead><tr><th>OS / Cliente</th><th>Total</th><th>Recebido</th><th>Pendente</th><th>Situação</th><th>Último pagamento</th><th>Ação</th></tr></thead><tbody id="tabelaFinanceiro"></tbody></table></div>
+        </div>
+        <div id="painelPagamento" class="card detalhes">
           <h3>Registrar pagamento</h3>
           <p id="pagamentoDescricao"></p>
           <p id="pagamentoSaldo"></p>
+
           <form id="formPagamento">
             <div class="campos">
-              <div class="campo"><label for="valorPagamento">Valor recebido agora (R$) *</label><input id="valorPagamento" type="number" min="0.01" step="0.01" required></div>
-              <div class="campo"><label for="formaPagamento">Forma de pagamento</label><select id="formaPagamento"><option>Dinheiro</option><option>Pix</option><option>Cartão</option><option>Transferência</option></select></div>
+              <div>
+                <label>Valor recebido agora (R$) *</label>
+                <input id="valorPagamento" type="number" min="0.01" step="0.01" required>
+              </div>
+
+              <div>
+                <label>Forma de pagamento</label>
+                <select id="formaPagamento">
+                  <option>Dinheiro</option>
+                  <option>Pix</option>
+                  <option>Cartão</option>
+                  <option>Transferência</option>
+                </select>
+              </div>
             </div>
+
             <div class="acoes">
-              <button class="botao primario" type="submit" id="botaoPagamento">Confirmar pagamento</button>
-              <button class="botao secundario" type="button" onclick="fecharPagamento()">Cancelar</button>
+              <button class="botao botao-primario" type="submit" id="botaoPagamento">Confirmar pagamento</button>
+              <button class="botao botao-secundario" type="button" onclick="fecharPagamento()">Cancelar</button>
             </div>
+
             <div id="mensagemPagamento" class="mensagem"></div>
           </form>
         </div>
       </section>
-
-      <section id="detalhesOS" class="card detalhes">
-        <h3>Detalhes da Ordem de Serviço</h3>
-        <div id="conteudoDetalhes"></div>
-        <div class="secao-titulo">Atualizar status</div>
-        <div class="campo"><label for="novoStatus">Novo status</label><select id="novoStatus"></select></div>
-        <div class="acoes">
-          <button class="botao primario" id="botaoStatus" onclick="salvarStatus()">Salvar alteração</button>
-          <button class="botao perigo" id="botaoExcluir" onclick="confirmarExclusao()">Excluir OS</button>
-          <button class="botao secundario" onclick="fecharDetalhes()">Fechar</button>
-        </div>
-        <div id="mensagemDetalhes" class="mensagem"></div>
-      </section>
     </main>
   </div>
 
+        <dialog id="detalhesOS" class="card modal-os" aria-labelledby="tituloDetalhes">
+          <div class="modal-cabecalho"><h3 id="tituloDetalhes">Detalhes da Ordem de Serviço</h3><button type="button" class="btn-mini" onclick="fecharDetalhes()" aria-label="Fechar detalhes">✕</button></div>
+          <div id="conteudoDetalhes"></div>
+
+          <div class="secao-titulo">Atualizar status</div>
+          <label for="novoStatus">Novo status</label>
+          <select id="novoStatus"></select>
+
+          <div class="acoes">
+            <button class="botao botao-primario" id="botaoStatus" onclick="salvarStatus()">Salvar alteração</button>
+            <button class="botao botao-secundario" onclick="fecharDetalhes()">Fechar</button>
+          </div>
+
+          <div id="mensagemDetalhes" class="mensagem"></div>
+        </dialog>
+
   <script>
     const STATUS = [
-      "Recebido", "Em análise", "Aguardando aprovação", "Aguardando peças",
-      "Em manutenção", "Concluído", "Entregue", "Cancelado"
+      "Recebido",
+      "Em análise",
+      "Aguardando aprovação",
+      "Aguardando peças",
+      "Em manutenção",
+      "Concluído",
+      "Entregue",
+      "Cancelado"
     ];
-    const STATUS_ENCERRADOS = ["Concluído", "Entregue", "Cancelado"];
+
     let ordens = [];
     let osSelecionada = null;
     let osPagamento = null;
 
     const $ = id => document.getElementById(id);
+
     const moeda = valor => Number(valor || 0).toLocaleString("pt-BR", {
-      style: "currency", currency: "BRL"
+      style: "currency",
+      currency: "BRL"
     });
 
     function escapar(texto) {
       return String(texto ?? "").replace(/[&<>"']/g, c => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
       }[c]));
     }
 
@@ -384,29 +879,51 @@
 
     function chamarServidor(funcao, ...argumentos) {
       return new Promise((resolve, reject) => {
-        google.script.run.withSuccessHandler(resolve)
-          .withFailureHandler(reject)[funcao](...argumentos);
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)
+          [funcao](...argumentos);
       });
+    }
+
+    function atualizarTopbar(pagina) {
+      const titulos = {
+        cadastro: {
+          titulo: "Nova Ordem de Serviço",
+          subtitulo: "Cadastre os dados do cliente e do equipamento."
+        },
+        historico: {
+          titulo: "Histórico de Ordens de Serviço",
+          subtitulo: "Consulte, filtre e atualize as ordens de serviço."
+        },
+        abertas: {
+          titulo: "Ordens em aberto",
+          subtitulo: "Acompanhe os serviços que ainda precisam de atendimento."
+        },
+        financeiro: {
+          titulo: "Controle Financeiro",
+          subtitulo: "Acompanhe os valores dos serviços e registre recebimentos."
+        }
+      };
+
+      $("tituloPagina").textContent = titulos[pagina].titulo;
+      $("subtituloPagina").textContent = titulos[pagina].subtitulo;
     }
 
     function abrirPagina(pagina) {
       document.querySelectorAll(".pagina").forEach(el => {
         el.classList.toggle("ativa", el.id === pagina);
       });
+
       document.querySelectorAll(".menu button").forEach(el => {
         el.classList.toggle("ativo", el.id === "menu-" + pagina);
       });
 
-      const titulos = {
-        dashboard: "Ordens em aberto",
-        cadastro: "Nova Ordem de Serviço",
-        historico: "Histórico de Ordens de Serviço",
-        financeiro: "Financeiro"
-      };
-      $("tituloPagina").textContent = titulos[pagina];
-      $("detalhesOS").classList.remove("visivel");
+      atualizarTopbar(pagina);
 
-      if (pagina !== "cadastro") carregarOrdens();
+      if (pagina !== "cadastro") {
+        carregarOrdens();
+      }
     }
 
     function preencherStatus() {
@@ -424,102 +941,125 @@
     async function carregarOrdens() {
       try {
         ordens = await chamarServidor("listarOS");
-        mostrarDashboard();
         mostrarHistorico();
-        preencherFiltrosFinanceiro();
+        mostrarAbertas();
         mostrarFinanceiro();
       } catch (erro) {
-        mensagem("mensagemCadastro", "Erro ao carregar dados: " + erro.message, true);
+        mensagem("mensagemHistorico", "Erro ao carregar dados: " + erro.message, true);
       }
     }
 
-    function ordensAbertas() {
-      return ordens.filter(os => !STATUS_ENCERRADOS.includes(os.status));
-    }
+    $("formOS").addEventListener("submit", async function(evento) {
+      evento.preventDefault();
 
-    function filtrarPorTexto(os, texto) {
-      if (!texto) return true;
-      const campos = [os.numero, os.idCliente, os.nome, os.telefone, os.marca, os.status];
-      return campos.join(" ").toLowerCase().includes(texto.toLowerCase());
-    }
+      const botao = $("botaoSalvar");
+      const dados = Object.fromEntries(new FormData(this).entries());
+
+      botao.disabled = true;
+      botao.textContent = "Salvando...";
+      mensagem("mensagemCadastro", "");
+
+      try {
+        const resposta = await chamarServidor("salvarOS", dados);
+        mensagem("mensagemCadastro", resposta);
+        this.reset();
+        await carregarOrdens();
+      } catch (erro) {
+        mensagem("mensagemCadastro", erro.message, true);
+      } finally {
+        botao.disabled = false;
+        botao.textContent = "Salvar Ordem de Serviço";
+      }
+    });
 
     function classeStatus(status) {
-      if (status === "Concluído") return "concluido";
-      if (status === "Entregue") return "entregue";
+      if (status === "Concluído" || status === "Entregue") return "concluido";
       if (status === "Cancelado") return "cancelado";
       if (status === "Aguardando aprovação" || status === "Aguardando peças") return "aviso";
       return "";
     }
 
-    function criarCardOS(os) {
-      return `
-        <article class="os-card">
-          <div class="os-cabecalho">
-            <div>
-              <div class="os-numero">${escapar(os.numero)}</div>
-              <div class="os-data">${escapar(os.data)}</div>
-            </div>
-            <span class="status ${classeStatus(os.status)}">${escapar(os.status)}</span>
-          </div>
-          <div class="os-info">
-            <div><strong>Cliente:</strong> ${escapar(os.nome)}</div>
-            <div><strong>Telefone:</strong> ${escapar(os.telefone || "-")}</div>
-            <div><strong>ID do cliente:</strong> ${escapar(os.idCliente)}</div>
-            <div><strong>Equipamento:</strong> ${escapar(os.marca || "Não informado")} ${os.polegadas ? escapar(os.polegadas) + '"' : ""}</div>
-            <div><strong>Valor:</strong> ${moeda(os.valor)}</div>
-          </div>
-          <div class="os-acoes">
-            <button class="btn-mini" onclick="verOS('${escapar(os.numero)}')">Ver detalhes</button>
-          </div>
-        </article>`;
-    }
-
-    function mostrarDashboard() {
-      const abertas = ordens.filter(os => !STATUS_ENCERRADOS.includes(os.status));
-      const encerradas = ordens.filter(os => STATUS_ENCERRADOS.includes(os.status));
-
-      $("qtdAbertas").textContent = abertas.length;
-      $("qtdManutencao").textContent = abertas.filter(os => os.status === "Em manutenção").length;
-      $("qtdAguardando").textContent = abertas.filter(os =>
-        ["Aguardando aprovação", "Aguardando peças"].includes(os.status)
-      ).length;
-
-      const texto = $("buscaDashboard").value.trim();
-      const data = $("dataDashboard").value;
-      const filtrar = os => filtrarPorTexto(os, texto) && (!data || os.dataISO === data);
-      const abertasFiltradas = abertas.filter(filtrar);
-      const encerradasFiltradas = encerradas.filter(filtrar);
-
-      $("listaDashboard").innerHTML = abertasFiltradas.length
-        ? abertasFiltradas.map(criarCardOS).join("")
-        : '<div class="vazio">Nenhuma ordem em andamento encontrada.</div>';
-
-      $("listaEncerradas").innerHTML = encerradasFiltradas.length
-        ? encerradasFiltradas.map(criarCardOS).join("")
-        : '<div class="vazio">Nenhuma ordem encerrada encontrada.</div>';
-    }
-
     function mostrarHistorico() {
-      const texto = $("pesquisaHistorico").value.trim();
-      const inicio = $("dataInicio").value;
-      const fim = $("dataFim").value;
+      const nome = $("filtroNome").value.toLowerCase().trim();
+      const identificador = $("filtroIdentificador").value.toLowerCase().trim();
+      const telefone = $("filtroTelefone").value.toLowerCase().trim();
+      const dataInicio = $("filtroDataInicio").value;
+      const dataFim = $("filtroDataFim").value;
+      const tbody = $("tabelaHistorico");
 
-      const filtradas = ordens.filter(os =>
-        filtrarPorTexto(os, texto) &&
-        (!inicio || os.dataISO >= inicio) &&
-        (!fim || os.dataISO <= fim)
-      );
+      const filtradas = ordens.filter(os => {
+        const correspondeNome = !nome || os.nome.toLowerCase().includes(nome);
+        const correspondeId = !identificador ||
+          [os.numero, os.idCliente].join(" ").toLowerCase().includes(identificador);
+        const correspondeTelefone = !telefone || os.telefone.toLowerCase().includes(telefone);
+        const correspondeInicio = !dataInicio || (os.dataISO && os.dataISO >= dataInicio);
+        const correspondeFim = !dataFim || (os.dataISO && os.dataISO <= dataFim);
 
-      $("listaHistorico").innerHTML = filtradas.length
-        ? filtradas.map(criarCardOS).join("")
-        : '<div class="vazio">Nenhuma ordem encontrada.</div>';
+        return correspondeNome && correspondeId && correspondeTelefone &&
+          correspondeInicio && correspondeFim;
+      });
+
+      if (!filtradas.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="vazio">Nenhuma ordem encontrada.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtradas.map(os => `
+        <tr>
+          <td>
+            <strong>${escapar(os.numero)}</strong>
+            <small>${escapar(os.data)}</small>
+          </td>
+          <td>
+            ${escapar(os.nome)}
+            <small>${escapar(os.telefone)}</small>
+          </td>
+          <td>${escapar(os.marca)} ${os.polegadas ? escapar(os.polegadas) + '"' : ""}</td>
+          <td><span class="status ${classeStatus(os.status)}">${escapar(os.status)}</span></td>
+          <td><button class="btn-mini" onclick="verOS('${escapar(os.numero)}')">Ver detalhes</button></td>
+        </tr>
+      `).join("");
     }
 
-    function verOS(numeroOS) {
-      const os = ordens.find(item => item.numero === numeroOS);
+    function limparFiltrosHistorico() {
+      ["filtroNome", "filtroIdentificador", "filtroTelefone", "filtroDataInicio", "filtroDataFim"]
+        .forEach(id => $(id).value = "");
+      mostrarHistorico();
+    }
+
+    function mostrarAbertas() {
+      const pesquisa = $("pesquisaAbertas").value.toLowerCase().trim();
+      const tbody = $("tabelaAbertas");
+      const encerradas = ["Concluído", "Entregue", "Cancelado"];
+      const filtradas = ordens.filter(os => {
+        const emAberto = !encerradas.includes(os.status);
+        const correspondePesquisa = [os.numero, os.idCliente, os.nome, os.telefone, os.marca]
+          .join(" ").toLowerCase().includes(pesquisa);
+        return emAberto && correspondePesquisa;
+      });
+
+      if (!filtradas.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="vazio">Nenhuma ordem em aberto encontrada.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtradas.map(os => `
+        <tr>
+          <td><strong>${escapar(os.numero)}</strong><small>${escapar(os.data)}</small></td>
+          <td>${escapar(os.nome)}<small>${escapar(os.telefone)}</small></td>
+          <td>${escapar(os.marca)} ${os.polegadas ? escapar(os.polegadas) + '"' : ""}</td>
+          <td><span class="status ${classeStatus(os.status)}">${escapar(os.status)}</span></td>
+          <td><button class="btn-mini" onclick="verOS('${escapar(os.numero)}')">Ver detalhes</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function verOS(numero) {
+      const os = ordens.find(item => item.numero === numero);
       if (!os) return;
 
-      osSelecionada = numeroOS;
+      osSelecionada = numero;
+
       const campos = [
         ["Número da OS", os.numero],
         ["Data", os.data],
@@ -532,28 +1072,31 @@
         ["Serviço", os.servico],
         ["Valor", moeda(os.valor)],
         ["Recebido", moeda(os.recebido)],
+        ["Status atual", os.status],
+        ["Saldo pendente", moeda(Math.max(0, Number(os.valor || 0) - Number(os.recebido || 0)))],
         ["Forma de pagamento", os.formaPagamento],
         ["Data do pagamento", os.dataPagamento],
         ["Observações", os.observacoes]
       ];
 
       $("conteudoDetalhes").innerHTML = campos.map(([titulo, valor]) =>
-        `<div class="info-linha"><strong>${titulo}:</strong> ${escapar(valor || "-")}</div>`
+        `<div class="info-linha ${["Diagnóstico", "Serviço", "Observações"].includes(titulo) ? "ampla" : ""}"><strong>${titulo}:</strong> ${escapar(valor || "-")}</div>`
       ).join("");
 
       $("novoStatus").value = os.status;
       mensagem("mensagemDetalhes", "");
-      $("detalhesOS").classList.add("visivel");
-      $("detalhesOS").scrollIntoView({ behavior: "smooth", block: "start" });
+      if (!$("detalhesOS").open) $("detalhesOS").showModal();
+      $("detalhesOS").scrollTop = 0;
     }
 
     function fecharDetalhes() {
       osSelecionada = null;
-      $("detalhesOS").classList.remove("visivel");
+      $("detalhesOS").close();
     }
 
     async function salvarStatus() {
       if (!osSelecionada) return;
+
       const botao = $("botaoStatus");
       botao.disabled = true;
 
@@ -561,7 +1104,6 @@
         await chamarServidor("atualizarStatusOS", osSelecionada, $("novoStatus").value);
         await carregarOrdens();
         mensagem("mensagemDetalhes", "Status atualizado com sucesso!");
-        verOS(osSelecionada);
       } catch (erro) {
         mensagem("mensagemDetalhes", erro.message, true);
       } finally {
@@ -569,90 +1111,58 @@
       }
     }
 
-    async function confirmarExclusao() {
-      if (!osSelecionada) return;
-      const numeroOS = osSelecionada;
-      const confirma = confirm(
-        "Tem certeza de que deseja excluir a OS " + numeroOS +
-        "? Esta ação não poderá ser desfeita."
-      );
-      if (!confirma) return;
-
-      const botao = $("botaoExcluir");
-      botao.disabled = true;
-      try {
-        await chamarServidor("excluirOS", numeroOS);
-        fecharDetalhes();
-        await carregarOrdens();
-        alert("Ordem de Serviço excluída com sucesso.");
-      } catch (erro) {
-        mensagem("mensagemDetalhes", erro.message, true);
-      } finally {
-        botao.disabled = false;
-      }
+    const finSaldo = os => Math.max(0, Math.round((Number(os.valor || 0)-Number(os.recebido || 0))*100)/100);
+    function finEstado(os) {
+      if (Number(os.valor || 0) <= 0) return "semvalor";
+      if (!finSaldo(os)) return "quitado";
+      return Number(os.recebido || 0)>0 ? "parcial" : "pendente";
     }
-
-    function preencherFiltrosFinanceiro() {
-      const meses = [
-        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
-      ];
-      const mesSelect = $("filtroMesFinanceiro");
-      const anoSelect = $("filtroAnoFinanceiro");
-      const mesAtual = String(new Date().getMonth() + 1).padStart(2, "0");
-      const anoAtual = String(new Date().getFullYear());
-
-      mesSelect.innerHTML = '<option value="">Todos os meses</option>' +
-        meses.map((mes, i) => `<option value="${String(i + 1).padStart(2, "0")}">${mes}</option>`).join("");
-
-      const anos = [...new Set(ordens.map(os => (os.dataISO || "").slice(0, 4)).filter(Boolean))].sort().reverse();
-      anoSelect.innerHTML = '<option value="">Todos os anos</option>' +
-        anos.map(ano => `<option value="${escapar(ano)}">${escapar(ano)}</option>`).join("");
-
-      if (anos.includes(anoAtual)) anoSelect.value = anoAtual;
-      mesSelect.value = mesAtual;
+    function finFiltradas() {
+      const busca=$("finBusca").value.trim().toLowerCase(), ini=$("finInicio").value, fim=$("finFim").value, estado=$("finSituacao").value;
+      return ordens.filter(os => (!busca || [os.numero,os.nome,os.telefone].join(" ").toLowerCase().includes(busca)) && (!ini || (os.dataISO && os.dataISO>=ini)) && (!fim || (os.dataISO && os.dataISO<=fim)) && (estado==="todos" || finEstado(os)===estado));
     }
-
+    function limparFinanceiro() {
+      ["finBusca","finInicio","finFim"].forEach(id=>$(id).value=""); $("finSituacao").value="todos"; mostrarFinanceiro();
+    }
     function mostrarFinanceiro() {
-      const mes = $("filtroMesFinanceiro").value;
-      const ano = $("filtroAnoFinanceiro").value;
-      const filtradas = ordens.filter(os => {
-        const partes = (os.dataISO || "").split("-");
-        return (!ano || partes[0] === ano) && (!mes || partes[1] === mes);
-      });
-
-      const total = filtradas.reduce((soma, os) => soma + Number(os.valor || 0), 0);
-      const recebido = filtradas.reduce((soma, os) => soma + Number(os.recebido || 0), 0);
-      $("totalServicos").textContent = moeda(total);
-      $("totalRecebido").textContent = moeda(recebido);
-      $("totalPendente").textContent = moeda(Math.max(0, total - recebido));
-
-      $("tabelaFinanceiro").innerHTML = filtradas.length ? filtradas.map(os => {
-        const saldo = Math.max(0, Number(os.valor || 0) - Number(os.recebido || 0));
-        return `<tr>
-          <td><strong>${escapar(os.numero)}</strong><br>${escapar(os.nome)}</td>
-          <td>${moeda(os.valor)}</td>
-          <td>${moeda(os.recebido)}</td>
-          <td>${moeda(saldo)}</td>
-          <td>${saldo > 0
-            ? `<button class="btn-mini" onclick="abrirPagamento('${escapar(os.numero)}')">Registrar</button>`
-            : "Quitado"}</td>
-        </tr>`;
-      }).join("") : '<tr><td colspan="5" class="vazio">Nenhuma OS encontrada para o período selecionado.</td></tr>';
+      const lista=finFiltradas();
+      const total=lista.reduce((a,o)=>a+Number(o.valor||0),0), recebido=lista.reduce((a,o)=>a+Number(o.recebido||0),0), pendente=lista.reduce((a,o)=>a+finSaldo(o),0);
+      const taxa=total>0?Math.min(100,Math.max(0,recebido/total*100)):0;
+      $("totalServicos").textContent=moeda(total); $("totalRecebido").textContent=moeda(recebido); $("totalPendente").textContent=moeda(pendente);
+      $("finTaxa").textContent=taxa.toFixed(1).replace(".",",")+"%"; $("finPercentual").textContent=$("finTaxa").textContent;
+      $("finPendentes").textContent=lista.filter(o=>finSaldo(o)>0).length+" OS com saldo";
+      $("finContagem").textContent=lista.length+" de "+ordens.length+" ordens de serviço";
+      $("finRecGraf").textContent=moeda(recebido); $("finPenGraf").textContent=moeda(pendente);
+      const fatia=recebido+pendente>0?recebido/(recebido+pendente)*100:0;
+      $("finRosca").style.background=recebido+pendente>0?`conic-gradient(#299e76 0% ${fatia}%, #d8a347 ${fatia}% 100%)`:"#94a3b833";
+      $("finRosca").setAttribute("aria-label",`Recebido ${moeda(recebido)}; pendente ${moeda(pendente)}`);
+      const meses={}; lista.forEach(o=>{const m=o.dataISO?o.dataISO.slice(0,7):"Sem data"; const g=meses[m]||(meses[m]={r:0,p:0});g.r+=Number(o.recebido||0);g.p+=finSaldo(o);});
+      const max=Math.max(1,...Object.values(meses).map(g=>g.r+g.p));
+      $("finBarras").innerHTML=Object.keys(meses).sort().map(m=>{const g=meses[m];const nome=/^\d{4}-\d{2}$/.test(m)?m.slice(5)+"/"+m.slice(0,4):m;return `<div class="fin-linha"><strong>${escapar(nome)}</strong><div><div class="fin-trilho" aria-label="Recebido ${moeda(g.r)}; pendente ${moeda(g.p)}"><div class="fin-barra" style="width:${Math.max(0,g.r/max*100)}%;background:#299e76"></div><div class="fin-barra" style="width:${g.p/max*100}%;background:#d8a347"></div></div><small>${moeda(g.r+g.p)} · recebido ${moeda(g.r)}</small></div></div>`;}).join("") || '<p class="vazio">Sem dados no período.</p>';
+      const labels={semvalor:"Sem valor",quitado:"Quitado",parcial:"Parcial",pendente:"Pendente"};
+      $("tabelaFinanceiro").innerHTML=lista.map(os=>{const saldo=finSaldo(os),e=finEstado(os);return `<tr><td><strong>${escapar(os.numero)}</strong><small>${escapar(os.nome)}</small></td><td>${moeda(os.valor)}</td><td>${moeda(os.recebido)}</td><td>${moeda(saldo)}</td><td><span class="status ${e==="quitado"?"concluido":e==="semvalor"?"":"aviso"}">${labels[e]}</span></td><td>${escapar(os.dataPagamento||"—")}<small>${escapar(os.formaPagamento||"")}</small></td><td>${saldo>0?`<button class="btn-mini" data-os="${escapar(os.numero)}" onclick="abrirPagamento(this.dataset.os)">Registrar</button>`:""} <button class="btn-mini" data-os="${escapar(os.numero)}" onclick="verOS(this.dataset.os)">Detalhes</button></td></tr>`;}).join("") || '<tr><td colspan="7" class="vazio">Nenhuma OS encontrada.</td></tr>';
+    }
+    function exportarFinanceiro() {
+      const cel=v=>{let t=String(v??"");if(/^[\s]*[=+@-]/.test(t))t="'"+t;return '"'+t.replace(/"/g,'""')+'"';};
+      const linhas=[["OS","Cliente","Data de abertura","Total","Recebido","Pendente","Último pagamento","Última forma"],...finFiltradas().map(o=>[o.numero,o.nome,o.data,Number(o.valor||0).toFixed(2).replace(".",","),Number(o.recebido||0).toFixed(2).replace(".",","),finSaldo(o).toFixed(2).replace(".",","),o.dataPagamento,o.formaPagamento])];
+      const url=URL.createObjectURL(new Blob(["\uFEFF"+linhas.map(l=>l.map(cel).join(";")).join("\r\n")],{type:"text/csv;charset=utf-8"}));const a=document.createElement("a");a.href=url;a.download="OS-Tech-financeiro.csv";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
     }
 
-    function abrirPagamento(numeroOS) {
-      const os = ordens.find(item => item.numero === numeroOS);
+    function abrirPagamento(numero) {
+      const os = ordens.find(item => item.numero === numero);
       if (!os) return;
-      osPagamento = numeroOS;
+
+      osPagamento = numero;
       const saldo = Math.max(0, Number(os.valor || 0) - Number(os.recebido || 0));
-      $("pagamentoDescricao").textContent = os.numero + " - " + os.nome;
-      $("pagamentoSaldo").textContent = "Valor pendente: " + moeda(saldo);
+
+      $("pagamentoDescricao").textContent = `${os.numero} - ${os.nome}`;
+      $("pagamentoSaldo").textContent = `Valor pendente: ${moeda(saldo)}`;
       $("valorPagamento").value = saldo.toFixed(2);
       $("valorPagamento").max = saldo.toFixed(2);
       mensagem("mensagemPagamento", "");
+
       $("painelPagamento").classList.add("visivel");
-      $("painelPagamento").scrollIntoView({ behavior: "smooth", block: "start" });
+      $("painelPagamento").scrollIntoView({ behavior: "smooth" });
     }
 
     function fecharPagamento() {
@@ -660,31 +1170,10 @@
       $("painelPagamento").classList.remove("visivel");
     }
 
-    $("formOS").addEventListener("submit", async function(evento) {
-      evento.preventDefault();
-      const botao = $("botaoSalvar");
-      const dados = Object.fromEntries(new FormData(this).entries());
-      botao.disabled = true;
-      botao.textContent = "Salvando...";
-      mensagem("mensagemCadastro", "");
-
-      try {
-        const resposta = await chamarServidor("salvarOS", dados);
-        mensagem("mensagemCadastro", resposta);
-        this.reset();
-        $("valor").value = "0";
-        await carregarOrdens();
-      } catch (erro) {
-        mensagem("mensagemCadastro", erro.message, true);
-      } finally {
-        botao.disabled = false;
-        botao.textContent = "Salvar Ordem de Serviço";
-      }
-    });
-
     $("formPagamento").addEventListener("submit", async function(evento) {
       evento.preventDefault();
       if (!osPagamento) return;
+
       const botao = $("botaoPagamento");
       botao.disabled = true;
 
@@ -695,6 +1184,7 @@
           $("valorPagamento").value,
           $("formaPagamento").value
         );
+
         fecharPagamento();
         await carregarOrdens();
       } catch (erro) {
@@ -704,8 +1194,26 @@
       }
     });
 
+    function atualizarBotaoTema() {
+      const escuro = document.documentElement.dataset.tema === "escuro";
+      $("botaoTema").setAttribute("aria-pressed", String(escuro));
+      $("textoTema").textContent = escuro ? "Modo claro" : "Modo escuro";
+      $("iconeTema").innerHTML = escuro
+        ? '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/>'
+        : '<path d="M20.9 13.4A9 9 0 0 1 10.6 3.1 9 9 0 1 0 20.9 13.4Z"/>';
+    }
+
+    function alternarTema() {
+      const tema = document.documentElement.dataset.tema === "escuro" ? "claro" : "escuro";
+      document.documentElement.dataset.tema = tema;
+      try { localStorage.setItem("geradorOS.tema", tema); } catch (e) { /* Tema disponível nesta sessão. */ }
+      atualizarBotaoTema();
+    }
+
+    atualizarBotaoTema();
+    $("detalhesOS").addEventListener("close", () => { osSelecionada = null; });
     preencherStatus();
-    abrirPagina("dashboard");
+    atualizarTopbar("cadastro");
   </script>
 </body>
 </html>
